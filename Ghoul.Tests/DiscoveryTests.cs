@@ -1,0 +1,28 @@
+﻿using System;
+using NUnit.Framework;
+using PeanutButter.Utils;
+
+namespace Ghoul.Tests
+{
+    [TestFixture]
+    public class DiscoveryTests
+    {
+        [Test]
+        public void FindSlack()
+        {
+            var moo = new DesktopWindowUtil();
+            var windows = moo.ListWindows();
+            windows.ForEach(w =>
+            {
+                new[]
+                {
+                    "--- start ---",
+                    w.Caption,
+                    w.Process.MainModule.FileName,
+                    $"{w.Position.Top} {w.Position.Left} {w.Position.Bottom} {w.Position.Right}",
+                    "--- end ---"
+                }.ForEach(s => Console.WriteLine(s));
+            });
+        }
+    }
+}
