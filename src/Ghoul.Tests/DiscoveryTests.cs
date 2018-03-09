@@ -17,7 +17,7 @@ namespace Ghoul.Tests
                 new[]
                 {
                     "--- start ---",
-                    w.Caption,
+                    w.WindowTitle,
                     w.Process.MainModule.FileName,
                     $"{w.Position.Top} {w.Position.Left} {w.Position.Bottom} {w.Position.Right}",
                     "--- end ---"

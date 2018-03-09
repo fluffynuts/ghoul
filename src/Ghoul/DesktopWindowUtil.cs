@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -37,7 +38,7 @@ namespace Ghoul
 
         }
 
-        public List<ProcessWindow> ListWindows()
+        public ProcessWindow[] ListWindows()
         {
             var collection = new List<ProcessWindow>();
 
@@ -52,7 +53,7 @@ namespace Ghoul
             }
 
             EnumDesktopWindows(IntPtr.Zero, Filter, IntPtr.Zero);
-            return collection;
+            return collection.Where(o => !string.IsNullOrWhiteSpace(o.WindowTitle)).ToArray();
         }
     }
 }

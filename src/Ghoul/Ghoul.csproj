@@ -33,13 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.INI.1.2.219\lib\net452\PeanutButter.INI.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.INI.1.2.220\lib\net452\PeanutButter.INI.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.219\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.220\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.Utils.1.2.219\lib\net452\PeanutButter.Utils.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.Utils.1.2.220\lib\net452\PeanutButter.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,7 +54,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationRestarter.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DesktopWindowUtil.cs" />
+    <Compile Include="CheckListDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CheckListDialog.Designer.cs">
+      <DependentUpon>CheckListDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LayoutConfigurationItem.cs" />
+    <Compile Include="LayoutSaver.cs" />
     <Compile Include="ProcessWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PromptForm.cs">
@@ -69,6 +79,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Win32Api.cs" />
+    <Compile Include="WindowPosition.cs" />
+    <EmbeddedResource Include="CheckListDialog.resx">
+      <DependentUpon>CheckListDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>

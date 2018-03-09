@@ -11,7 +11,7 @@ namespace Ghoul
             label1.Text = message;
         }
 
-        public PromptResult Prompt()
+        public IPromptResult Prompt()
         {
             var result = ShowDialog();
             return new PromptResult(
@@ -26,11 +26,18 @@ namespace Ghoul
         {
             if (e.KeyChar == 13)
             {
+                button1.PerformClick();
             }
         }
     }
 
-    public class PromptResult
+    public interface IPromptResult
+    {
+        DialogResult Result { get; }
+        string UserInput { get; }
+    }
+
+    public class PromptResult: IPromptResult
     {
         public DialogResult Result { get; }
         public string UserInput { get; }
