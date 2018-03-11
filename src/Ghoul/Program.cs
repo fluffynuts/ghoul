@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using PeanutButter.INIFile;
@@ -22,8 +20,8 @@ namespace Ghoul
             Application.SetCompatibleTextRenderingDefault(false);
             var trayIcon = new TrayIcon(Resources.Ghoul);
             var config = LoadConfig();
-            var sectionNameHelper = new SectionNameHelper();
-            AddSaveLayoutItem(trayIcon, config);
+            var sectionNameHelper = new SectionNameHelper(config);
+            AddSaveLayoutItem(trayIcon, config, sectionNameHelper);
             var menu = AddRestoreLayoutMenuTo(trayIcon);
             AddRestoreMenusTo(menu, config, trayIcon, sectionNameHelper);
             AddExitMenuItemTo(trayIcon);
@@ -55,8 +53,11 @@ namespace Ghoul
         )
         {
             var restarter = new ApplicationRestarter(config);
-            var restorer = new LayoutRestorer(config, restarter);
-            sectionNameHelper.ListLayoutNamesFrom(config)
+            var restorer = new LayoutRestorer(
+                config,
+                restarter,
+                sectionNameHelper);
+            sectionNameHelper.ListLayoutNames()
                 .ForEach(
                     s =>
                     {
@@ -68,9 +69,15 @@ namespace Ghoul
         }
 
 
-        private static void AddSaveLayoutItem(TrayIcon trayIcon, INIFile config)
+        private static void AddSaveLayoutItem(
+            TrayIcon trayIcon,
+            INIFile config,
+            SectionNameHelper sectionNameHelper)
         {
-            var layoutSaver = new LayoutSaver(config, new UserInput());
+            var layoutSaver = new LayoutSaver(
+                config,
+                new UserInput(),
+                sectionNameHelper);
             trayIcon.AddMenuItem(
                 "Save current layout...",
                 () => layoutSaver.SaveCurrentLayout()
@@ -93,46 +100,6 @@ namespace Ghoul
             var programPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
             var programFolder = Path.GetDirectoryName(programPath);
             return Path.Combine(programFolder, "ghoul.ini");
-        }
-    }
-
-    internal class SectionNameHelper
-    {
-        public string[] ListLayoutNamesFrom(INIFile config)
-        {
-            return config.Sections.Aggregate(
-                new List<string>(),
-                (acc, cur) =>
-                {
-                    if (!cur.StartsWith(Constants.APP_LAYOUT_SECTION_PREFIX))
-                        return acc;
-                    var layoutName = GrokLayoutNameFrom(cur);
-                    if (layoutName == null)
-                        return acc;
-                    if (!acc.Contains(layoutName))
-                        acc.Add(layoutName);
-                    return acc;
-                }).ToArray();
-        }
-
-        private string GrokLayoutNameFrom(string cur)
-        {
-            var parts = cur.Split(':');
-            return parts.Length < 3 ? null : parts[1]?.Trim();
-        }
-    }
-
-    internal class CaseInsensitiveStringComparer
-        : IEqualityComparer<string>
-    {
-        public bool Equals(string x, string y)
-        {
-            return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public int GetHashCode(string obj)
-        {
-            return obj.ToLowerInvariant().GetHashCode();
         }
     }
 }

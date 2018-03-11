@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationRestarter.cs" />
+    <Compile Include="CaseInsensitiveStringComparer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DesktopWindowUtil.cs" />
     <Compile Include="CheckListDialog.cs">
@@ -64,6 +65,7 @@
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="LayoutConfigurationItem.cs" />
+    <Compile Include="LayoutRestorer.cs" />
     <Compile Include="LayoutSaver.cs" />
     <Compile Include="ProcessWindow.cs" />
     <Compile Include="Program.cs" />
@@ -79,6 +81,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SectionNameHelper.cs" />
     <Compile Include="Win32Api.cs" />
     <Compile Include="WindowPosition.cs" />
     <EmbeddedResource Include="CheckListDialog.resx">

@@ -7,49 +7,21 @@ using PeanutButter.Utils;
 
 namespace Ghoul
 {
-    internal class LayoutRestorer
-    {
-        private readonly INIFile _config;
-        private readonly IApplicationRestarter _applicationRestarter;
-
-        public LayoutRestorer(
-            INIFile config,
-            IApplicationRestarter applicationRestarter
-        )
-        {
-            _config = config;
-            _applicationRestarter = applicationRestarter;
-        }
-
-        public void RestoreLayout(string name)
-        {
-            _applicationRestarter.RestartApplicationsForLayout(name);
-            RestoreWindowPositionsForLayout(name);
-        }
-
-        private void RestoreWindowPositionsForLayout(string name)
-        {
-            var section = GetSectionNameForLayoutName(name);
-        }
-
-        private object GetSectionNameForLayoutName(string name)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
     internal class LayoutSaver
     {
         private readonly INIFile _config;
         private readonly IUserInput _userInput;
+        private readonly ISectionNameHelper _sectionNameHelper;
 
         public LayoutSaver(
             INIFile config,
-            IUserInput userInput
+            IUserInput userInput,
+            ISectionNameHelper sectionNameHelper
         )
         {
             _config = config;
             _userInput = userInput;
+            _sectionNameHelper = sectionNameHelper;
         }
 
         public void SaveCurrentLayout()
@@ -117,24 +89,20 @@ namespace Ghoul
                 new CaseInsensitiveStringComparer()
             );
             var idx = 1;
+            var prefix = _sectionNameHelper.CreateAppLayoutSectionNameFor(layoutName, appName);
             while (true)
             {
-                var attempt = $"{MakeAppLayoutSectionName(layoutName, appName)} #{idx++}";
+                var attempt = $"{prefix} #{idx++}";
                 if (!allSections.Contains(attempt))
                     return attempt;
             }
-        }
-
-        private static string MakeAppLayoutSectionName(string layoutName, string appName)
-        {
-            return $"{Constants.APP_LAYOUT_SECTION_PREFIX}{layoutName} : {appName}";
         }
 
         private void RemoveAllAppLayoutSectionsFor(
             string layoutName
         )
         {
-            var search = MakeAppLayoutSectionName(layoutName, "");
+            var search = _sectionNameHelper.CreateAppLayoutSectionNameFor(layoutName, "");
             _config.Sections
                 .Where(s => s.StartsWith(search))
                 .ToArray()
