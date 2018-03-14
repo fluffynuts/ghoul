@@ -3,25 +3,44 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using PeanutButter.INIFile;
+using PeanutButter.TinyEventAggregator;
 using PeanutButter.Utils;
+using Keys = Ghoul.Constants.Keys;
 
 namespace Ghoul
 {
-    internal class LayoutSaver
+    internal interface ILayoutSaver
     {
-        private readonly INIFile _config;
+        void SaveCurrentLayout();
+    }
+
+    public class LayoutAddedEvent : EventBase<string>
+    {
+    }
+
+    internal class LayoutSaver
+        : ILayoutSaver
+    {
+        private readonly IINIFile _config;
         private readonly IUserInput _userInput;
         private readonly ISectionNameHelper _sectionNameHelper;
+        private readonly IDesktopWindowUtil _desktopWindowUtil;
+        private readonly EventAggregator _eventAggregator;
 
         public LayoutSaver(
-            INIFile config,
+            IINIFile config,
             IUserInput userInput,
-            ISectionNameHelper sectionNameHelper
+            ISectionNameHelper sectionNameHelper,
+            IDesktopWindowUtil desktopWindowUtil,
+            // TODO: change to IEventAggregator
+            EventAggregator eventAggregator
         )
         {
             _config = config;
             _userInput = userInput;
             _sectionNameHelper = sectionNameHelper;
+            _desktopWindowUtil = desktopWindowUtil;
+            _eventAggregator = eventAggregator;
         }
 
         public void SaveCurrentLayout()
@@ -35,8 +54,7 @@ namespace Ghoul
             // TODO: better input of layout names
             // TODO: verify with user when re-using a layout name: it will overwrite the existing settings
 
-            var util = new DesktopWindowUtil();
-            var processWindows = util.ListWindows();
+            var processWindows = _desktopWindowUtil.ListWindows();
             var selector = new CheckListDialog<ProcessWindow>(
                 processWindows,
                 new[]
@@ -53,6 +71,7 @@ namespace Ghoul
             RemoveAllAppLayoutSectionsFor(layoutName);
             AddAppLayoutSectionsFor(layoutName, processWindows);
             _config.Persist();
+            _eventAggregator.GetEvent<LayoutAddedEvent>().Publish(layoutName);
         }
 
         private void AddAppLayoutSectionsFor(string layoutName, ProcessWindow[] processWindows)
@@ -60,7 +79,7 @@ namespace Ghoul
             processWindows.ForEach(
                 w =>
                 {
-                    var proc = w?.Process?.MainModule?.FileName;
+                    var proc = w?.Process?.MainModule.FileName;
                     if (proc == null)
                         return;
                     var procFileName = Path.GetFileName(proc);
@@ -69,13 +88,13 @@ namespace Ghoul
                         procFileName
                     );
                     _config.AddSection(sectionName);
-                    var pos = w?.Position;
+                    var pos = w.Position;
                     if (string.IsNullOrWhiteSpace(proc) || pos == null)
                         return;
                     var section = _config[sectionName];
-                    section["position"] = pos.ToString();
-                    section["title"] = w.WindowTitle;
-                    section["executable"] = procFileName;
+                    section[Keys.POSITION] = pos.ToString();
+                    section[Keys.TITLE] = w.WindowTitle;
+                    section[Keys.EXECUTABLE] = proc;
                 });
         }
 
@@ -106,7 +125,8 @@ namespace Ghoul
             _config.Sections
                 .Where(s => s.StartsWith(search))
                 .ToArray()
-                .ForEach(_config.RemoveSection);
+                // FIXME: remove this when RemoveSection is in the IINIFile interface
+                .ForEach((_config as INIFile).RemoveSection);
         }
     }
 

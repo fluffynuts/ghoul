@@ -33,16 +33,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.INI.1.2.220\lib\net452\PeanutButter.INI.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.INI.1.2.221\lib\net452\PeanutButter.INI.dll</HintPath>
+    </Reference>
+    <Reference Include="PeanutButter.TinyEventAggregator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PeanutButter.TinyEventAggregator.1.2.221\lib\net452\PeanutButter.TinyEventAggregator.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.220\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.221\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.Utils.1.2.220\lib\net452\PeanutButter.Utils.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.Utils.1.2.221\lib\net452\PeanutButter.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationRestarter.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="CaseInsensitiveStringComparer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DesktopWindowUtil.cs" />
@@ -64,6 +71,10 @@
     <Compile Include="CheckListDialog.Designer.cs">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="DryIoc\AsyncExecutionFlowScopeContext.cs" />
+    <Compile Include="DryIoc\Container.cs" />
+    <Compile Include="DryIoc\FastExpressionCompiler.cs" />
+    <Compile Include="DryIoc\ImTools.cs" />
     <Compile Include="LayoutConfigurationItem.cs" />
     <Compile Include="LayoutRestorer.cs" />
     <Compile Include="LayoutSaver.cs" />

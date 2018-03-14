@@ -44,5 +44,22 @@ namespace Ghoul
             GetWindowText(handle, builder, builder.Capacity);
             return builder.ToString();
         }
+
+        public void MoveTo(
+            int left,
+            int top,
+            int width,
+            int height)
+        {
+            SetWindowPos(
+                Handle,
+                IntPtr.Zero, 
+                left,
+                top,
+                width,
+                height,
+                0
+            );
+        }
     }
 }

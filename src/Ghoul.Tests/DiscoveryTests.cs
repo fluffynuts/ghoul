@@ -19,7 +19,7 @@ namespace Ghoul.Tests
                     "--- start ---",
                     w.WindowTitle,
                     w.Process.MainModule.FileName,
-                    $"{w.Position.Top} {w.Position.Left} {w.Position.Bottom} {w.Position.Right}",
+                    $"{w.Position.Top} {w.Position.Left} {w.Position.Width} {w.Position.Height}",
                     "--- end ---"
                 }.ForEach(s => Console.WriteLine(s));
             });

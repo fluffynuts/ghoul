@@ -4,33 +4,31 @@ using System.Linq;
 using System.Reflection;
 using PeanutButter.Utils;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Ghoul
 {
     public class WindowPosition
     {
+        public int Top { get; private set; }
         public int Left { get; private set; }
-        public int Right { get; private set; }
-        public int Bottom { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public int Top { get; private set; }
 
         private static readonly Dictionary<string, PropertyInfo> PropertyInfos =
-            typeof(WindowPosition).GetProperties().ToDictionary(pi => pi.Name, pi => pi);
+            typeof(WindowPosition).GetProperties().ToDictionary(pi => pi.Name, pi => pi, new CaseInsensitiveStringComparer());
 
         public WindowPosition(Win32Api.RECT rect)
         {
             Top = rect.Top;
             Left = rect.Left;
-            Right = rect.Right;
-            Bottom = rect.Bottom;
             Width = rect.Right - rect.Left;
             Height = rect.Bottom - rect.Top;
         }
 
         public WindowPosition(string serialized)
         {
+            var setAnything = false;
             (serialized ?? "")
                 .Split(',')
                 .ForEach(part =>
@@ -38,12 +36,16 @@ namespace Ghoul
                     var subs = part.Split(':');
                     if (subs.Length != 2)
                         return;
-                    if (!PropertyInfos.TryGetValue(subs[0], out var propInfo))
+                    if (!PropertyInfos.TryGetValue(subs[0].Trim(), out var propInfo))
                         return;
-                    if (!TryConvert(subs[1], propInfo.PropertyType, out var propertyValue))
+                    if (!TryConvert(subs[1].Trim(), propInfo.PropertyType, out var propertyValue))
                         return;
                     propInfo.SetValue(this, propertyValue);
+                    setAnything = true;
                 });
+            if (!setAnything)
+                // ReSharper disable once LocalizableElement
+                throw new ArgumentException($"No part of serialized position could be used to configure a {typeof(WindowPosition)} object: '{serialized}'", nameof(serialized));
         }
 
         private bool TryConvert(

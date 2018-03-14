@@ -22,10 +22,6 @@ namespace Ghoul
             SB_BOTH = 0x3
         }
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowText",
-            ExactSpelling = false, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
         [DllImport("oleacc.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetProcessHandleFromHwnd(IntPtr hwnd);
 
@@ -38,5 +34,45 @@ namespace Ghoul
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int GetScrollPos(IntPtr hwnd, ScrollbarOrientation orientation);
 
+        public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport(
+            "user32.dll",
+            EntryPoint = "GetWindowText",
+            ExactSpelling = false,
+            CharSet = CharSet.Auto,
+            SetLastError = true)]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+
+        [DllImport(
+            "user32.dll",
+            EntryPoint = "EnumDesktopWindows",
+            ExactSpelling = false,
+            CharSet = CharSet.Auto,
+            SetLastError = true)]
+        public static extern bool EnumDesktopWindows(
+            IntPtr hDesktop,
+            EnumDelegate lpEnumCallbackFunction,
+            IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool SetWindowPos(
+            IntPtr handle,
+            IntPtr insertAfter,
+            int x,
+            int y,
+            int width,
+            int height,
+            uint flags);
+
+        public static class WindowInsertionSpecialValues
+        {
+            public const int Bottom = 1;
+            public const int NoTopMost = -2;
+        }
     }
 }

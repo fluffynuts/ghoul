@@ -1,41 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Ghoul
 {
-    public class DesktopWindowUtil
+    public interface IDesktopWindowUtil
     {
-        public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
+        void MoveWindow(IntPtr handle, int x, int y, int width, int height);
+        ProcessWindow[] ListWindows();
+    }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWindowVisible(IntPtr hWnd);
-
-        [DllImport("user32.dll", EntryPoint = "GetWindowText",
-            ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
-        [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows",
-            ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDelegate lpEnumCallbackFunction,
-            IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern bool SetWindowPos(IntPtr handle, IntPtr insertAfter, int x, int y, int width, int height,
-            uint flags);
-
-        public static class WindowInsertionSpecialValues
-        {
-            public const int Bottom = 1;
-            public const int NoTopMost = -2;
-        }
-
+    public class DesktopWindowUtil
+        : IDesktopWindowUtil
+    {
         public void MoveWindow(IntPtr handle, int x, int y, int width, int height)
         {
-
+            // TODO
         }
 
         public ProcessWindow[] ListWindows()
@@ -44,7 +24,7 @@ namespace Ghoul
 
             bool Filter(IntPtr hWnd, int lParam)
             {
-                if (IsWindowVisible(hWnd))
+                if (Win32Api.IsWindowVisible(hWnd))
                 {
                     collection.Add(new ProcessWindow(hWnd));
                 }
@@ -52,7 +32,7 @@ namespace Ghoul
                 return true;
             }
 
-            EnumDesktopWindows(IntPtr.Zero, Filter, IntPtr.Zero);
+            Win32Api.EnumDesktopWindows(IntPtr.Zero, Filter, IntPtr.Zero);
             return collection.Where(o => !string.IsNullOrWhiteSpace(o.WindowTitle)).ToArray();
         }
     }

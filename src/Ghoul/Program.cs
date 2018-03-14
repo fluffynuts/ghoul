@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using PeanutButter.INIFile;
+using DryIoc;
+using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
 using PeanutButter.Utils;
 
@@ -18,14 +18,16 @@ namespace Ghoul
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             var trayIcon = new TrayIcon(Resources.Ghoul);
-            var config = LoadConfig();
-            var sectionNameHelper = new SectionNameHelper(config);
-            AddSaveLayoutItem(trayIcon, config, sectionNameHelper);
-            var menu = AddRestoreLayoutMenuTo(trayIcon);
-            AddRestoreMenusTo(menu, config, trayIcon, sectionNameHelper);
+            var container = Bootstrapper.Bootstrap(trayIcon);
+
+            AddSaveLayoutItem(container);
+            var menu = AddRestoreLayoutMenu(container);
+            AddRestoreMenusTo(menu, trayIcon, container);
             AddExitMenuItemTo(trayIcon);
-            config.Persist();
+            BindToLayoutAdded(menu, container);
+
             trayIcon.Show();
 
             Application.Run();
@@ -47,16 +49,11 @@ namespace Ghoul
 
         private static void AddRestoreMenusTo(
             MenuItem menu,
-            INIFile config,
-            TrayIcon trayIcon,
-            SectionNameHelper sectionNameHelper
-        )
+            ITrayIcon trayIcon,
+            IContainer container)
         {
-            var restarter = new ApplicationRestarter(config);
-            var restorer = new LayoutRestorer(
-                config,
-                restarter,
-                sectionNameHelper);
+            var restorer = container.Resolve<ILayoutRestorer>();
+            var sectionNameHelper = container.Resolve<ISectionNameHelper>();
             sectionNameHelper.ListLayoutNames()
                 .ForEach(
                     s =>
@@ -68,38 +65,36 @@ namespace Ghoul
                     });
         }
 
+        public static void BindToLayoutAdded(MenuItem restoreMenu, IContainer container)
+        {
+            var trayIcon = container.Resolve<ITrayIcon>();
+            var eventAggregator = container.Resolve<EventAggregator>(); // TODO: replace with IEventAggregator
+            eventAggregator.GetEvent<LayoutAddedEvent>().Subscribe(newLayout =>
+            {
+                var toRemove = new List<MenuItem>();
+                foreach (MenuItem item in restoreMenu.MenuItems)
+                    toRemove.Add(item);
+                toRemove.ForEach(item => item.Parent.MenuItems.Remove(item));
+                AddRestoreMenusTo(restoreMenu, trayIcon, container);
+            });
+        }
+
 
         private static void AddSaveLayoutItem(
-            TrayIcon trayIcon,
-            INIFile config,
-            SectionNameHelper sectionNameHelper)
+            IContainer container)
         {
-            var layoutSaver = new LayoutSaver(
-                config,
-                new UserInput(),
-                sectionNameHelper);
+            var layoutSaver = container.Resolve<ILayoutSaver>();
+            var trayIcon = container.Resolve<ITrayIcon>();
             trayIcon.AddMenuItem(
                 "Save current layout...",
                 () => layoutSaver.SaveCurrentLayout()
             );
         }
 
-        private static MenuItem AddRestoreLayoutMenuTo(TrayIcon trayIcon)
+        private static MenuItem AddRestoreLayoutMenu(IContainer container)
         {
-            return trayIcon.AddSubMenu("Restore layout");
-        }
-
-        private static INIFile LoadConfig()
-        {
-            var configLocation = FindConfig();
-            return new INIFile(configLocation);
-        }
-
-        private static string FindConfig()
-        {
-            var programPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-            var programFolder = Path.GetDirectoryName(programPath);
-            return Path.Combine(programFolder, "ghoul.ini");
+            var trayIcon = container.Resolve<ITrayIcon>();
+            return trayIcon.AddSubMenu(Constants.Menus.RESTORE);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using PeanutButter.Utils;
 
@@ -13,7 +14,9 @@ namespace Ghoul
         private CheckedItem<T>[] _items;
         private ColumnHeader[] _headers;
 
-        public CheckListDialog(T[] items) : this(items, ListAllPropertiesOf<T>())
+        // ReSharper disable once UnusedMember.Global
+        public CheckListDialog(T[] items) 
+            : this(items, ListAllPropertiesOf<T>())
         {
         }
 
@@ -63,16 +66,10 @@ namespace Ghoul
 
             _headers = GetColumnHeadersInOrder();
 
-            listView1.Items.AddRange(_items.Select(o =>
-            {
-                var listItem = new ListViewItem(
-                    new[] { "" }.Concat(
-                        itemProperties.Select(pi => pi.GetValue(o.ItemData, null)?.ToString() ?? "")
-                        ).ToArray()
-                        );
-                listItem.Tag = o;
-                return listItem;
-            }).ToArray());
+            listView1.Items.AddRange(
+                _items.Select(
+                    o => MakeListViewItemFor(itemProperties, o)
+                ).ToArray());
 
             var dialogResult = ShowDialog();
             return new CheckListDialogResult<T>(
@@ -81,6 +78,22 @@ namespace Ghoul
                     ? _items.Where(o => o.Checked).Select(o => o.ItemData).ToArray()
                     : new T[0]
             );
+        }
+
+        private static ListViewItem MakeListViewItemFor(
+            PropertyInfo[] itemProperties,
+            CheckedItem<T> data)
+        {
+            return new ListViewItem(
+                new[] {""}.Concat(
+                    itemProperties.Select(
+                        pi => pi.GetValue(data.ItemData, null)?.ToString() ?? ""
+                    )
+                ).ToArray()
+            )
+            {
+                Tag = data
+            };
         }
 
         private void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -137,9 +150,19 @@ namespace Ghoul
 
             listView1.Columns[e.Column].Tag = !value;
             foreach (ListViewItem item in listView1.Items)
-                item.Checked = !value;
+            {
+                var data = GetDataFor(item);
+                data.Checked = item.Checked = !value;
+            }
 
             listView1.Invalidate();
+        }
+
+        private CheckedItem<T> GetDataFor(ListViewItem item)
+        {
+            return item.Tag is CheckedItem<T> data
+                ? data
+                : throw new InvalidOperationException("Checklist should only contain Checkeditems");
         }
 
         private void listView1_MouseDown(object sender, MouseEventArgs e)
@@ -148,8 +171,7 @@ namespace Ghoul
             if (col != 0)
                 return;
             var item = listView1.GetItemAt(e.X, e.Y);
-            var data = item.Tag as CheckedItem<T>;
-            if (data == null)
+            if (!(item.Tag is CheckedItem<T> data))
                 return;
             data.Checked = !data.Checked;
         }
@@ -165,6 +187,21 @@ namespace Ghoul
             }
 
             return -1;
+        }
+
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Space)
+                return;
+
+            foreach (ListViewItem item in listView1.SelectedItems)
+            {
+                var newValue = !item.Checked;
+                var data = GetDataFor(item);
+                item.Checked = data.Checked = newValue;
+            }
+
+            e.SuppressKeyPress = true;
         }
     }
 

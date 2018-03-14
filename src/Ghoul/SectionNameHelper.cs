@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PeanutButter.INIFile;
+using Sections = Ghoul.Constants.Sections;
 
 namespace Ghoul
 {
-    internal interface ISectionNameHelper
+    public interface ISectionNameHelper
     {
         string[] ListLayoutNames();
 
@@ -18,9 +19,9 @@ namespace Ghoul
     internal class SectionNameHelper
         : ISectionNameHelper
     {
-        private readonly INIFile _config;
+        private readonly IINIFile _config;
 
-        public SectionNameHelper(INIFile config)
+        public SectionNameHelper(IINIFile config)
         {
             _config = config;
         }
@@ -31,7 +32,7 @@ namespace Ghoul
                 new List<string>(),
                 (acc, cur) =>
                 {
-                    if (!cur.StartsWith(Constants.APP_LAYOUT_SECTION_PREFIX))
+                    if (!cur.StartsWith(Sections.APP_LAYOUT_PREFIX))
                         return acc;
                     var layoutName = GrokLayoutNameFrom(cur);
                     if (layoutName == null)
@@ -46,12 +47,12 @@ namespace Ghoul
             string layoutName,
             string appName)
         {
-            return $"{Constants.APP_LAYOUT_SECTION_PREFIX}{layoutName} : {appName}";
+            return $"{Sections.APP_LAYOUT_PREFIX}{layoutName} : {appName}";
         }
 
         public string[] ListAppLayoutSectionsFor(string layout)
         {
-            var search = $"{Constants.APP_LAYOUT_SECTION_PREFIX}{layout} :";
+            var search = $"{Sections.APP_LAYOUT_PREFIX}{layout} :";
             return _config.Sections.Where(
                 s => s.StartsWith(search)
                 ).ToArray();

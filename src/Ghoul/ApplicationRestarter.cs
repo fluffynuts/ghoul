@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using PeanutButter.INIFile;
 using PeanutButter.Utils;
+using Sections = Ghoul.Constants.Sections;
 
 namespace Ghoul
 {
@@ -16,12 +17,12 @@ namespace Ghoul
     internal class ApplicationRestarter
         : IApplicationRestarter
     {
-        public ApplicationRestarter(INIFile config)
+        private readonly IINIFile _config;
+
+        public ApplicationRestarter(IINIFile config)
         {
             _config = config;
         }
-
-        private readonly INIFile _config;
 
         public void RestartApplicationsForLayout(
             string layoutName
@@ -68,7 +69,7 @@ namespace Ghoul
 
         private static string RestoreAppsSectionFor(string layoutName)
         {
-            return $"{Constants.RESTORE_SECTION_PREFIX}{layoutName}";
+            return $"{Sections.RESTORE_PREFIX}{layoutName}";
         }
 
         private static readonly Tuple<Func<string, bool>, Func<string, Process[], Process>>[] ProcessFinders =
