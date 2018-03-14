@@ -4,6 +4,7 @@ using NUnit.Framework;
 using static NExpect.Expectations;
 using NExpect;
 using static PeanutButter.RandomGenerators.RandomValueGen;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Ghoul.Tests
 {

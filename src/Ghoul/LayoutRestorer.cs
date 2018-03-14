@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PeanutButter.INIFile;
 using PeanutButter.Utils;
@@ -56,6 +57,24 @@ namespace Ghoul
             ProcessWindow window,
             string[] appLayoutSections)
         {
+            var stored = appLayoutSections.Aggregate(
+                new Dictionary<string, Dictionary<string, string>>(),
+                (acc, section) =>
+                {
+                    acc[section] = new[]
+                        {
+                            Keys.POSITION,
+                            Keys.EXECUTABLE,
+                            Keys.TITLE
+                        }.Select(
+                            k => new
+                            {
+                                k,
+                                v = _config.GetValue(section, k)
+                            })
+                        .ToDictionary(o => o.k, o => o.v);
+                    return acc;
+                });
             return WindowMatchStrategies.Aggregate(
                 null as string,
                 (finalMatch, currentStrategy) =>
@@ -64,26 +83,56 @@ namespace Ghoul
                                null as string,
                                (thisSectionMatch, currentSection) =>
                                    thisSectionMatch ??
-                                   (currentStrategy(_config, currentSection, window)
+                                   (currentStrategy(stored[currentSection], window)
                                        ? currentSection
                                        : null)
                            );
                 });
         }
 
-        private static readonly Func<IINIFile, string, ProcessWindow, bool>[] WindowMatchStrategies =
-        {
-            IsExactMatch
-        };
+        private static readonly Func<Dictionary<string, string>, ProcessWindow, bool>[]
+            WindowMatchStrategies =
+            {
+                IsExactMatch,
+                IsCaseInsensitiveMatch,
+                IsProcessAndPartialWindowMatch,
+                IsProcessMatchOnly
+            };
 
-        private static bool IsExactMatch(
-            IINIFile config,
-            string section,
+        private static bool IsProcessMatchOnly(
+            Dictionary<string, string> config,
             ProcessWindow window)
         {
-            var (title, executable) = GetTitleAndExecutableFrom(config, section);
-            return window.WindowTitle == title &&
-                   window.ProcessName == executable;
+            return config.TryGetValue(Keys.EXECUTABLE, out var exe) &&
+                   window.ProcessName.Equals(exe, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private static bool IsExactMatch(
+            Dictionary<string, string> config,
+            ProcessWindow window)
+        {
+            var (title, executable) = GetTitleAndExecutableFrom(config);
+            return window.WindowTitle.Equals(title, StringComparison.CurrentCulture) &&
+                   window.ProcessName.Equals(executable, StringComparison.CurrentCulture);
+        }
+
+        private static bool IsCaseInsensitiveMatch(
+            Dictionary<string, string> config,
+            ProcessWindow window)
+        {
+            var (title, executable) = GetTitleAndExecutableFrom(config);
+            return window.WindowTitle.Equals(title, StringComparison.CurrentCultureIgnoreCase) &&
+                   window.ProcessName.Equals(executable, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private static bool IsProcessAndPartialWindowMatch(
+            Dictionary<string, string> config,
+            ProcessWindow window)
+        {
+            var (title, executable) = GetTitleAndExecutableFrom(config);
+            title = title.Split('-').Last(); // windows which include a document / project / extra title
+            return window.ProcessName.Equals(executable, StringComparison.CurrentCultureIgnoreCase) &&
+                   window.WindowTitle.Split('-').Last().IsSimilarTo(title);
         }
 
         private void ApplyLayout(
@@ -104,12 +153,16 @@ namespace Ghoul
         }
 
         private static (string title, string executable) GetTitleAndExecutableFrom(
-            IINIFile config,
-            string section)
+            Dictionary<string, string> config
+        )
         {
             return (
-                config.GetValue(section, Keys.TITLE),
-                config.GetValue(section, Keys.EXECUTABLE)
+                config.TryGetValue(Keys.TITLE, out var title)
+                    ? title
+                    : "",
+                config.TryGetValue(Keys.EXECUTABLE, out var exe)
+                    ? exe
+                    : ""
             );
         }
     }

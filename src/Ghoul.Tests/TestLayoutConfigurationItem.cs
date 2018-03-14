@@ -1,10 +1,7 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using static PeanutButter.RandomGenerators.RandomValueGen;
 using static NExpect.Expectations;
 using NExpect;
-using PeanutButter.RandomGenerators;
 using PeanutButter.Utils;
 
 namespace Ghoul.Tests
@@ -35,34 +32,6 @@ namespace Ghoul.Tests
                 ProcessWindow src)
             {
                 return new LayoutConfigurationItem(src);
-            }
-        }
-    }
-
-    public class ProcessWindowBuilder : GenericBuilder<ProcessWindowBuilder, ProcessWindow>
-    {
-        public override ProcessWindow ConstructEntity()
-        {
-            var process = Process.GetProcesses()
-                .Select(Filter)
-                .FirstOrDefault(p => p != null);
-            return new ProcessWindow(process.MainWindowHandle);
-        }
-
-        private Process Filter(
-            Process process)
-        {
-            try
-            {
-                return string.IsNullOrWhiteSpace(process.ProcessName) ||
-                       string.IsNullOrWhiteSpace(process.MainModule.FileName) ||
-                       string.IsNullOrWhiteSpace(process.MainWindowTitle)
-                    ? null
-                    : process;
-            }
-            catch
-            {
-                return null;
             }
         }
     }

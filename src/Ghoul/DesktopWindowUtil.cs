@@ -6,18 +6,12 @@ namespace Ghoul
 {
     public interface IDesktopWindowUtil
     {
-        void MoveWindow(IntPtr handle, int x, int y, int width, int height);
         ProcessWindow[] ListWindows();
     }
 
     public class DesktopWindowUtil
         : IDesktopWindowUtil
     {
-        public void MoveWindow(IntPtr handle, int x, int y, int width, int height)
-        {
-            // TODO
-        }
-
         public ProcessWindow[] ListWindows()
         {
             var collection = new List<ProcessWindow>();

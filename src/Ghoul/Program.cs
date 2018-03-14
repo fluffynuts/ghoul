@@ -65,7 +65,7 @@ namespace Ghoul
                     });
         }
 
-        public static void BindToLayoutAdded(MenuItem restoreMenu, IContainer container)
+        private static void BindToLayoutAdded(MenuItem restoreMenu, IContainer container)
         {
             var trayIcon = container.Resolve<ITrayIcon>();
             var eventAggregator = container.Resolve<EventAggregator>(); // TODO: replace with IEventAggregator

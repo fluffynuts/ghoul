@@ -4,15 +4,18 @@ namespace Ghoul
 {
     public partial class PromptForm : Form
     {
+        private readonly string _caption;
+
         public PromptForm(string caption, string message)
         {
             InitializeComponent();
-            Text = caption;
+            _caption = caption;
             label1.Text = message;
         }
 
         public IPromptResult Prompt()
         {
+            Text = _caption;
             var result = ShowDialog();
             return new PromptResult(
                 result,

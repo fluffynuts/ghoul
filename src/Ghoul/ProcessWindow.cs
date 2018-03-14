@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using static Ghoul.Win32Api;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Ghoul
 {

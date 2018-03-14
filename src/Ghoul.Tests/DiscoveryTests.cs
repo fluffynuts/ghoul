@@ -8,6 +8,7 @@ namespace Ghoul.Tests
     public class DiscoveryTests
     {
         [Test]
+        [Explicit]
         public void FindSlack()
         {
             var moo = new DesktopWindowUtil();
