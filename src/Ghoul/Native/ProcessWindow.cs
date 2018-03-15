@@ -8,7 +8,7 @@ namespace Ghoul.Native
 {
     public class ProcessWindow
     {
-        public string ProcessName => Process.MainModule.FileName;
+        public string ProcessName => TryGetProcessMainModuleFilename();
         public Process Process { get; }
         public IntPtr Handle { get; }
         public string WindowTitle { get; }
@@ -21,6 +21,18 @@ namespace Ghoul.Native
             Process = FindProcessFor(windowHandle);
             Handle = windowHandle;
             Position = FindPositionOf(windowHandle);
+        }
+
+        private string TryGetProcessMainModuleFilename()
+        {
+            try
+            {
+                return Process.MainModule.FileName;
+            }
+            catch
+            {
+                return "";  // safer for any caller
+            }
         }
 
         private Process FindProcessFor(

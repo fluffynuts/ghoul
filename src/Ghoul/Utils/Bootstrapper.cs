@@ -39,9 +39,8 @@ namespace Ghoul.Utils
                 },
                 Reuse.Singleton);
 
-            container.RegisterDelegate<TrayIconAnimator>(
-                r =>
-                    new TrayIconAnimator(r.Resolve<ITrayIcon>() as TrayIcon, Resources.main_icon, Resources.hourglass),
+            container.RegisterDelegate<ITrayIconAnimator>(
+                r => new TrayIconAnimator(r.Resolve<ITrayIcon>(), Resources.main_icon, Resources.hourglass),
                 Reuse.Singleton);
             return container;
         }

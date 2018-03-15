@@ -43,16 +43,16 @@
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.INI.1.2.222\lib\net452\PeanutButter.INI.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.INI.1.2.223\lib\net452\PeanutButter.INI.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.RandomGenerators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.RandomGenerators.1.2.222\lib\net452\PeanutButter.RandomGenerators.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.RandomGenerators.1.2.223\lib\net452\PeanutButter.RandomGenerators.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.222\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.223\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
     </Reference>
     <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.Utils.1.2.222\lib\net452\PeanutButter.Utils.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.Utils.1.2.223\lib\net452\PeanutButter.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

@@ -24,7 +24,7 @@ namespace Ghoul.Ui
         private readonly ISectionNameHelper _sectionNameHelper;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILastLayoutUtility _lastLayoutUtility;
-        private readonly TrayIconAnimator _animator;
+        private readonly ITrayIconAnimator _animator;
 
         public ApplicationCoordinator(
             ILayoutSaver layoutSaver,
@@ -33,7 +33,7 @@ namespace Ghoul.Ui
             ISectionNameHelper sectionNameHelper,
             IEventAggregator eventAggregator,
             ILastLayoutUtility lastLayoutUtility,
-            TrayIconAnimator animator
+            ITrayIconAnimator animator
         )
         {
             _layoutSaver = layoutSaver;

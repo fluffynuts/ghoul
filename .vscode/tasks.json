@@ -1,0 +1,15 @@
+{
+  "command": "\"C:/Program Files (x86)/Inno Setup 5/iscc.exe\"",
+  "version": "1.0.3",
+  "args": [
+    "${file}"
+  ],
+  "isShellCommand": false,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "echoCommand": false,
+  "group": {
+    "kind": "build",
+    "isDefault": true
+  }
+}
