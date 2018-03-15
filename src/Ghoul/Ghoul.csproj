@@ -137,7 +137,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ghoul.ico" />
+    <None Include="Resources\hourglass.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\minecraft-zombie.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

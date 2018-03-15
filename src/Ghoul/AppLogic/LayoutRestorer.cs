@@ -46,6 +46,7 @@ namespace Ghoul.AppLogic
 
         public void RestoreLayout(string name)
         {
+            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Publish(name);
             _applicationRestarter.RestartApplicationsForLayout(name);
             RestoreWindowPositionsFor(name);
         }

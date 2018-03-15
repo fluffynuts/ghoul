@@ -5,4 +5,8 @@ namespace Ghoul.AppLogic.Events
     public class LayoutRestoredEvent : EventBase<string>
     {
     }
+
+    public class LayoutRestoreStartedEvent : EventBase<string>
+    {
+    }
 }

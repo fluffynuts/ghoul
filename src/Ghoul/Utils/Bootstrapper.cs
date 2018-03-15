@@ -30,7 +30,19 @@ namespace Ghoul.Utils
             container.RegisterDelegate<IINIFile>(LoadConfig, Reuse.Singleton);
             // TODO: replace with usage of IEventAggregator
             container.RegisterDelegate<IEventAggregator>(resolver => EventAggregator.Instance, Reuse.Singleton);
-            container.RegisterDelegate<ITrayIcon>(r => new TrayIcon(Resources.Ghoul), Reuse.Singleton);
+            container.RegisterDelegate<ITrayIcon>(
+                r => {
+                    var trayIcon = new TrayIcon(Resources.main_icon);
+                    // ReSharper disable once LocalizableElement
+                    trayIcon.NotifyIcon.Text = "Ghoul - Desktop layout resurrector";
+                    return trayIcon;
+                },
+                Reuse.Singleton);
+
+            container.RegisterDelegate<TrayIconAnimator>(
+                r =>
+                    new TrayIconAnimator(r.Resolve<ITrayIcon>() as TrayIcon, Resources.main_icon, Resources.hourglass),
+                Reuse.Singleton);
             return container;
         }
 
@@ -41,7 +53,5 @@ namespace Ghoul.Utils
             result.Persist(); // ensure config exists
             return result;
         }
-
     }
-
 }

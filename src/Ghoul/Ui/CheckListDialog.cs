@@ -36,7 +36,7 @@ namespace Ghoul.Ui
             listView1.OwnerDraw = true;
             listView1.View = View.Details;
             listView1.CheckBoxes = true;
-            Icon = Resources.Ghoul;
+            Icon = Resources.main_icon;
         }
 
         private ColumnHeader[] GetColumnHeadersInOrder()

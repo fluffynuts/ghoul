@@ -24,6 +24,7 @@ namespace Ghoul.Ui
         private readonly ISectionNameHelper _sectionNameHelper;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILastLayoutUtility _lastLayoutUtility;
+        private readonly TrayIconAnimator _animator;
 
         public ApplicationCoordinator(
             ILayoutSaver layoutSaver,
@@ -31,7 +32,8 @@ namespace Ghoul.Ui
             ILayoutRestorer layoutRestorer,
             ISectionNameHelper sectionNameHelper,
             IEventAggregator eventAggregator,
-            ILastLayoutUtility lastLayoutUtility
+            ILastLayoutUtility lastLayoutUtility,
+            TrayIconAnimator animator
         )
         {
             _layoutSaver = layoutSaver;
@@ -40,6 +42,7 @@ namespace Ghoul.Ui
             _sectionNameHelper = sectionNameHelper;
             _eventAggregator = eventAggregator;
             _lastLayoutUtility = lastLayoutUtility;
+            _animator = animator;
         }
 
         public void Init()
@@ -47,7 +50,21 @@ namespace Ghoul.Ui
             var restoreMenuItem = CreateMenuEntries();
             HandleLayoutAddedEventFor(restoreMenuItem);
             BindDoubleClickToRestoreLast();
+            
+            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Subscribe(OnLayoutRestoreStarted);
+            _eventAggregator.GetEvent<LayoutRestoredEvent>().Subscribe(OnLayoutRestoreCompleted);
+
             _trayIcon.Show();
+        }
+
+        private void OnLayoutRestoreCompleted(string layout)
+        {
+            _animator.Rest();
+        }
+
+        private void OnLayoutRestoreStarted(string layout)
+        {
+            _animator.Busy();
         }
 
         private MenuItem CreateMenuEntries()
