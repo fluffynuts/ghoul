@@ -1,6 +1,10 @@
 # ghoul
 Attempts to resurrect window layouts and restart apps which derp on screen layout changes
 
+# Installation
+Head on over to the releases page for an installer or be brave and roll-your-own 
+(instructions below)
+
 # How to use?
 Ghoul adds a systray icon which you can right-click to:
 - Save a layout
