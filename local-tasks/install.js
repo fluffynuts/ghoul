@@ -5,7 +5,8 @@ const
     installFolder = path.join(process.env.LOCALAPPDATA, "Ghoul");
 
 gulp.task("install", `Installs the binaries to ${installFolder}`, ["build"], () => {
-    gulp.src(path.join("src", "Ghoul", "bin", "Debug", "*"))
+    var binFolder = path.join("src", "Ghoul", "bin", "Debug");
+    gulp.src([path.join(binFolder, "*"), `!${path.join(binFolder, "ghoul.ini")}`])
     .pipe(gulp.dest(installFolder));
     windowsShortcut.createShortcut(
         path.join(installFolder, "Ghoul.exe"), "Ghoul", "Ghoul");
