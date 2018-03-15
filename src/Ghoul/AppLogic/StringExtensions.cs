@@ -2,7 +2,7 @@
 using System.Globalization;
 using PeanutButter.Utils;
 
-namespace Ghoul
+namespace Ghoul.AppLogic
 {
     public static class StringExtensions
     {

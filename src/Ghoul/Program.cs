@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DryIoc;
+using Ghoul.AppLogic;
+using Ghoul.Utils;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
 using PeanutButter.Utils;

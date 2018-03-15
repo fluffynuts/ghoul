@@ -70,12 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscoveryTests.cs" />
-    <Compile Include="ProcessWindowBuilder.cs" />
+    <Compile Include="Builders\ProcessWindowBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestBootstrapper.cs" />
-    <Compile Include="TestLayoutConfigurationItem.cs" />
-    <Compile Include="TestWindowPosition.cs" />
-    <Compile Include="TypeMatchers.cs" />
+    <Compile Include="Utils\TestBootstrapper.cs" />
+    <Compile Include="AppLogic\TestLayoutConfigurationItem.cs" />
+    <Compile Include="Native\TestWindowPosition.cs" />
+    <Compile Include="Matchers\TypeMatchers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

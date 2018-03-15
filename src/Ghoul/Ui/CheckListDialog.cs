@@ -4,9 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Ghoul.Native;
 using PeanutButter.Utils;
 
-namespace Ghoul
+namespace Ghoul.Ui
 {
     public partial class CheckListDialog<T> : Form
     {

@@ -1,4 +1,4 @@
-﻿namespace Ghoul
+﻿namespace Ghoul.Ui
 {
     internal interface IUserInput
     {

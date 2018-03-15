@@ -1,4 +1,5 @@
 ﻿using System;
+using Ghoul.Native;
 using NUnit.Framework;
 using PeanutButter.Utils;
 

@@ -1,11 +1,13 @@
 ﻿using System;
-using NUnit.Framework;
-using static NExpect.Expectations;
+using Ghoul.AppLogic;
+using Ghoul.Tests.Matchers;
+using Ghoul.Utils;
 using NExpect;
 using NSubstitute;
+using NUnit.Framework;
 using PeanutButter.TrayIcon;
 
-namespace Ghoul.Tests
+namespace Ghoul.Tests.Utils
 {
     [TestFixture]
     public class TestBootstrapper
@@ -22,8 +24,8 @@ namespace Ghoul.Tests
             // Act
             var result = container.Resolve(serviceType, false);
             // Assert
-            Expect(result).Not.To.Be.Null();
-            Expect(result).To.Be.An.Instance.Of(implementationType);
+            Expectations.Expect(result).Not.To.Be.Null();
+            Expectations.Expect(result).To.Be.An.Instance.Of(implementationType);
         }
     }
 }

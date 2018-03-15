@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using Ghoul.Native;
 using NUnit.Framework;
 using PeanutButter.RandomGenerators;
 
-namespace Ghoul.Tests
+namespace Ghoul.Tests.Builders
 {
     // ReSharper disable once UnusedMember.Global
     public class ProcessWindowBuilder : GenericBuilder<ProcessWindowBuilder, ProcessWindow>

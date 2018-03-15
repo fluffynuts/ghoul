@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ghoul
+namespace Ghoul.Native
 {
     public interface IDesktopWindowUtil
     {

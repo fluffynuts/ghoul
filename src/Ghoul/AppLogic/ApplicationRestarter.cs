@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using PeanutButter.INIFile;
 using PeanutButter.Utils;
-using Sections = Ghoul.Constants.Sections;
+using Sections = Ghoul.Utils.Constants.Sections;
 
-namespace Ghoul
+namespace Ghoul.AppLogic
 {
     internal interface IApplicationRestarter
     {

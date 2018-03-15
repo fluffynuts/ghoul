@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Ghoul
+namespace Ghoul.Utils
 {
     internal class CaseInsensitiveStringComparer
         : IEqualityComparer<string>

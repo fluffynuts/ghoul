@@ -1,4 +1,4 @@
-﻿namespace Ghoul
+﻿namespace Ghoul.Utils
 {
     internal static class Constants
     {

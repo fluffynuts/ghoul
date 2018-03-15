@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PeanutButter.INIFile;
-using Sections = Ghoul.Constants.Sections;
+using Sections = Ghoul.Utils.Constants.Sections;
 
-namespace Ghoul
+namespace Ghoul.AppLogic
 {
     public interface ISectionNameHelper
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using static Ghoul.Win32Api;
+
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Ghoul
+namespace Ghoul.Native
 {
     public class ProcessWindow
     {
@@ -26,15 +26,15 @@ namespace Ghoul
         private Process FindProcessFor(
             IntPtr handle)
         {
-            var processHandle = GetProcessHandleFromHwnd(handle);
-            var processId = GetProcessId(processHandle);
+            var processHandle = Win32Api.GetProcessHandleFromHwnd(handle);
+            var processId = Win32Api.GetProcessId(processHandle);
             return Process.GetProcessById(processId);
         }
 
         private WindowPosition FindPositionOf(
             IntPtr handle)
         {
-            GetWindowRect(handle, out var result);
+            Win32Api.GetWindowRect(handle, out var result);
             return new WindowPosition(result);
         }
 
@@ -42,7 +42,7 @@ namespace Ghoul
             IntPtr handle)
         {
             var builder = new StringBuilder(1024);
-            GetWindowText(handle, builder, builder.Capacity);
+            Win32Api.GetWindowText(handle, builder, builder.Capacity);
             return builder.ToString();
         }
 
@@ -52,7 +52,7 @@ namespace Ghoul
             int width,
             int height)
         {
-            SetWindowPos(
+            Win32Api.SetWindowPos(
                 Handle,
                 IntPtr.Zero, 
                 left,

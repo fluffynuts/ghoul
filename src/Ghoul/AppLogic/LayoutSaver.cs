@@ -2,12 +2,15 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Ghoul.Native;
+using Ghoul.Ui;
+using Ghoul.Utils;
 using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.Utils;
-using Keys = Ghoul.Constants.Keys;
+using Keys = Ghoul.Utils.Constants.Keys;
 
-namespace Ghoul
+namespace Ghoul.AppLogic
 {
     internal interface ILayoutSaver
     {

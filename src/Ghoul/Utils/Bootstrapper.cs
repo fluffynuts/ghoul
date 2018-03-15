@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using DryIoc;
 using PeanutButter.INIFile;
-using PeanutButter.Utils;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
+using PeanutButter.Utils;
 
-namespace Ghoul
+namespace Ghoul.Utils
 {
     public static class Bootstrapper
     {

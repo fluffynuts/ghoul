@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Ghoul.Utils;
 using PeanutButter.Utils;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Ghoul
+namespace Ghoul.Native
 {
     public class WindowPosition
     {

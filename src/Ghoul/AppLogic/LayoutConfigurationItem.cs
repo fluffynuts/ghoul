@@ -1,5 +1,8 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace Ghoul
+
+using Ghoul.Native;
+
+namespace Ghoul.AppLogic
 {
     public class LayoutConfigurationItem
     {

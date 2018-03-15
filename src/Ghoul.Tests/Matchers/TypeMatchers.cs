@@ -4,7 +4,7 @@ using NExpect.Interfaces;
 using NExpect.MatcherLogic;
 using PeanutButter.Utils;
 
-namespace Ghoul.Tests
+namespace Ghoul.Tests.Matchers
 {
     public static class TypeMatchers
     {

@@ -60,47 +60,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationRestarter.cs" />
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="CaseInsensitiveStringComparer.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="DesktopWindowUtil.cs" />
-    <Compile Include="CheckListDialog.cs">
+    <Compile Include="AppLogic\ApplicationRestarter.cs" />
+    <Compile Include="Utils\Bootstrapper.cs" />
+    <Compile Include="Utils\CaseInsensitiveStringComparer.cs" />
+    <Compile Include="Utils\Constants.cs" />
+    <Compile Include="Native\DesktopWindowUtil.cs" />
+    <Compile Include="Ui\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CheckListDialog.Designer.cs">
+    <Compile Include="Ui\CheckListDialog.Designer.cs">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="DryIoc\AsyncExecutionFlowScopeContext.cs" />
     <Compile Include="DryIoc\Container.cs" />
     <Compile Include="DryIoc\FastExpressionCompiler.cs" />
     <Compile Include="DryIoc\ImTools.cs" />
-    <Compile Include="LayoutConfigurationItem.cs" />
-    <Compile Include="LayoutRestorer.cs" />
-    <Compile Include="LayoutSaver.cs" />
-    <Compile Include="ProcessWindow.cs" />
+    <Compile Include="AppLogic\LayoutConfigurationItem.cs" />
+    <Compile Include="AppLogic\LayoutRestorer.cs" />
+    <Compile Include="AppLogic\LayoutSaver.cs" />
+    <Compile Include="Native\ProcessWindow.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="PromptForm.cs">
+    <Compile Include="Ui\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PromptForm.Designer.cs">
+    <Compile Include="Ui\PromptForm.Designer.cs">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SectionNameHelper.cs" />
-    <Compile Include="StringExtensions.cs" />
-    <Compile Include="UserInput.cs" />
-    <Compile Include="Win32Api.cs" />
-    <Compile Include="WindowPosition.cs" />
-    <EmbeddedResource Include="CheckListDialog.resx">
+    <Compile Include="AppLogic\SectionNameHelper.cs" />
+    <Compile Include="AppLogic\StringExtensions.cs" />
+    <Compile Include="Ui\UserInput.cs" />
+    <Compile Include="Native\Win32Api.cs" />
+    <Compile Include="Native\WindowPosition.cs" />
+    <EmbeddedResource Include="Ui\CheckListDialog.resx">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PromptForm.resx">
+    <EmbeddedResource Include="Ui\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -112,9 +107,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Include="Ui\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

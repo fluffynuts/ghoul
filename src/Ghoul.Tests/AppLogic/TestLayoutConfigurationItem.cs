@@ -1,10 +1,11 @@
-﻿using NUnit.Framework;
-using static PeanutButter.RandomGenerators.RandomValueGen;
-using static NExpect.Expectations;
+﻿using Ghoul.AppLogic;
+using Ghoul.Native;
 using NExpect;
+using NUnit.Framework;
+using PeanutButter.RandomGenerators;
 using PeanutButter.Utils;
 
-namespace Ghoul.Tests
+namespace Ghoul.Tests.AppLogic
 {
     [TestFixture]
     public class TestLayoutConfigurationItem
@@ -18,14 +19,14 @@ namespace Ghoul.Tests
             public void ShouldSet_(string target, string source)
             {
                 // Arrange
-                var processWindow = GetRandom<ProcessWindow>();
+                var processWindow = RandomValueGen.GetRandom<ProcessWindow>();
                 var expected = processWindow.GetPropertyValue(source);
                 // Pre-assert
                 // Act
                 var sut = Create(processWindow);
                 var result = sut.GetPropertyValue(target);
                 // Assert
-                Expect(result).To.Deep.Equal(expected);
+                Expectations.Expect(result).To.Deep.Equal(expected);
             }
 
             private LayoutConfigurationItem Create(

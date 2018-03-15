@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Ghoul
+namespace Ghoul.Ui
 {
     public partial class PromptForm : Form
     {

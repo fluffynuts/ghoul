@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ghoul.Native;
 using PeanutButter.INIFile;
 using PeanutButter.Utils;
-using Keys = Ghoul.Constants.Keys;
+using Keys = Ghoul.Utils.Constants.Keys;
 
-namespace Ghoul
+namespace Ghoul.AppLogic
 {
     internal interface ILayoutRestorer
     {
