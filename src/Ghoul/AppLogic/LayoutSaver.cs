@@ -45,13 +45,29 @@ namespace Ghoul.AppLogic
 
         public void SaveCurrentLayout()
         {
-            var layoutName = _userInput.Prompt(
-                "Enter name for layout",
-                "Please enter a name for the layout to be saved").UserInput;
-            if (string.IsNullOrWhiteSpace(layoutName))
-                return;
+            _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Publish(true);
+            try
+            {
+                var layoutName = _userInput.Prompt(
+                    "Enter name for layout",
+                    "Please enter a name for the layout to be saved").UserInput;
+                if (string.IsNullOrWhiteSpace(layoutName))
+                    return;
 
-            // TODO: better input of layout names
+                SaveCurrentToConfig(layoutName);
+                _eventAggregator
+                    .GetEvent<LayoutAddedEvent>()
+                    .Publish(layoutName);
+            }
+            finally
+            {
+                _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Publish(true);
+            }
+        }
+
+        private void SaveCurrentToConfig(string layoutName)
+        {
+// TODO: better input of layout names
             // TODO: verify with user when re-using a layout name: it will overwrite the existing settings
 
             var processWindows = _desktopWindowUtil.ListWindows();
@@ -71,9 +87,6 @@ namespace Ghoul.AppLogic
             RemoveAllAppLayoutSectionsFor(layoutName);
             AddAppLayoutSectionsFor(layoutName, processWindows);
             _config.Persist();
-            _eventAggregator
-                .GetEvent<LayoutAddedEvent>()
-                .Publish(layoutName);
         }
 
         private void AddAppLayoutSectionsFor(string layoutName, ProcessWindow[] processWindows)

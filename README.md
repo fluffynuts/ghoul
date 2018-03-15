@@ -15,6 +15,14 @@ Ghoul adds a systray icon which you can right-click to:
 # Application doesn't manage windows with elevated privileges
 Try using WinAero Tweaker to create an elevated shortcut. If you want this to run at startup, find the `shell:startup` folder (Start -> Run -> "shell:startup") and ensure you have a shortcut there.
 
+# Some of my windows don't go back where they should
+Are these windows running on a display with a different scaling from the display on which Ghoul is running? For example, is the display you're experiencing the issue on one with high pixel 
+densitiy, such as a high-def laptop display? Ghoul currently can't deal with different scaling
+between screens -- but I hope to fix that some day (: If this is important to you, raise and/or
+vote for it on GitHub. Personally, I've worked around this by dropping my laptop display
+resolution down to 1900x1200, where I can still run at 100% scale and have no issues with
+apps which can't deal with scaling changes well (like Ghoul!)
+
 # Application has bugs
 Probably. Try reporting an issue (:
 

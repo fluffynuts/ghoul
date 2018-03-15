@@ -51,18 +51,20 @@ namespace Ghoul.Ui
             HandleLayoutAddedEventFor(restoreMenuItem);
             BindDoubleClickToRestoreLast();
             
-            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Subscribe(OnLayoutRestoreStarted);
-            _eventAggregator.GetEvent<LayoutRestoredEvent>().Subscribe(OnLayoutRestoreCompleted);
+            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Subscribe(Busy);
+            _eventAggregator.GetEvent<LayoutRestoredEvent>().Subscribe(Rest);
+            _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Subscribe(Busy);
+            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Subscribe(Rest);
 
             _trayIcon.Show();
         }
 
-        private void OnLayoutRestoreCompleted(string layout)
+        private void Rest<T>(T arg)
         {
             _animator.Rest();
         }
 
-        private void OnLayoutRestoreStarted(string layout)
+        private void Busy<T>(T arg)
         {
             _animator.Busy();
         }
