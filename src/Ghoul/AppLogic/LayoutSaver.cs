@@ -13,7 +13,7 @@ using Keys = Ghoul.Utils.Constants.Keys;
 
 namespace Ghoul.AppLogic
 {
-    internal interface ILayoutSaver
+    public interface ILayoutSaver
     {
         void SaveCurrentLayout();
     }

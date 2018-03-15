@@ -3,7 +3,6 @@ using Ghoul.AppLogic;
 using Ghoul.Tests.Matchers;
 using Ghoul.Utils;
 using NExpect;
-using NSubstitute;
 using NUnit.Framework;
 using PeanutButter.INIFile;
 using PeanutButter.TrayIcon;
@@ -19,10 +18,11 @@ namespace Ghoul.Tests.Utils
         [TestCase(typeof(IApplicationRestarter), typeof(ApplicationRestarter))]
         [TestCase(typeof(ILayoutRestorer), typeof(LayoutRestorer))]
         [TestCase(typeof(IINIFile), typeof(INIFile))]
+        [TestCase(typeof(ITrayIcon), typeof(TrayIcon))]
         public void ShouldBeAbleToResolve_(Type serviceType, Type implementationType)
         {
             // Arrange
-            var container = Bootstrapper.Bootstrap(Substitute.For<ITrayIcon>());
+            var container = Bootstrapper.Bootstrap();
             // Pre-assert
             // Act
             var result = container.Resolve(serviceType, false);

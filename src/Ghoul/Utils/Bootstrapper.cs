@@ -9,7 +9,7 @@ namespace Ghoul.Utils
 {
     public static class Bootstrapper
     {
-        public static IContainer Bootstrap(ITrayIcon trayIcon)
+        public static IContainer Bootstrap()
         {
             var container = new Container();
             var allTypes = typeof(Bootstrapper).Assembly.GetTypes();
@@ -30,7 +30,7 @@ namespace Ghoul.Utils
             container.RegisterDelegate<IINIFile>(LoadConfig, Reuse.Singleton);
             // TODO: replace with usage of IEventAggregator
             container.RegisterDelegate<IEventAggregator>(resolver => EventAggregator.Instance, Reuse.Singleton);
-            container.RegisterDelegate<ITrayIcon>(r => trayIcon, Reuse.Singleton);
+            container.RegisterDelegate<ITrayIcon>(r => new TrayIcon(Resources.Ghoul), Reuse.Singleton);
             return container;
         }
 

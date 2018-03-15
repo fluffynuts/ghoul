@@ -70,6 +70,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Ui\ApplicationCoordinator.cs" />
     <Compile Include="Utils\Bootstrapper.cs" />
     <Compile Include="Utils\CaseInsensitiveStringComparer.cs" />
     <Compile Include="Utils\ConfigLocator.cs" />
