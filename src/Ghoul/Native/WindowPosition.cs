@@ -18,7 +18,10 @@ namespace Ghoul.Native
         public int Height { get; private set; }
 
         private static readonly Dictionary<string, PropertyInfo> PropertyInfos =
-            typeof(WindowPosition).GetProperties().ToDictionary(pi => pi.Name, pi => pi, new CaseInsensitiveStringComparer());
+            typeof(WindowPosition).GetProperties().ToDictionary(
+                pi => pi.Name,
+                pi => pi,
+                new CaseInsensitiveStringComparer());
 
         public WindowPosition(Win32Api.RECT rect)
         {
@@ -33,21 +36,24 @@ namespace Ghoul.Native
             var setAnything = false;
             (serialized ?? "")
                 .Split(',')
-                .ForEach(part =>
-                {
-                    var subs = part.Split(':');
-                    if (subs.Length != 2)
-                        return;
-                    if (!PropertyInfos.TryGetValue(subs[0].Trim(), out var propInfo))
-                        return;
-                    if (!TryConvert(subs[1].Trim(), propInfo.PropertyType, out var propertyValue))
-                        return;
-                    propInfo.SetValue(this, propertyValue);
-                    setAnything = true;
-                });
+                .ForEach(
+                    part =>
+                    {
+                        var subs = part.Split(':');
+                        if (subs.Length != 2)
+                            return;
+                        if (!PropertyInfos.TryGetValue(subs[0].Trim(), out var propInfo))
+                            return;
+                        if (!TryConvert(subs[1].Trim(), propInfo.PropertyType, out var propertyValue))
+                            return;
+                        propInfo.SetValue(this, propertyValue);
+                        setAnything = true;
+                    });
             if (!setAnything)
                 // ReSharper disable once LocalizableElement
-                throw new ArgumentException($"No part of serialized position could be used to configure a {typeof(WindowPosition)} object: '{serialized}'", nameof(serialized));
+                throw new ArgumentException(
+                    $"No part of serialized position could be used to configure a {typeof(WindowPosition)} object: '{serialized}'",
+                    nameof(serialized));
         }
 
         private bool TryConvert(
@@ -63,7 +69,7 @@ namespace Ghoul.Native
 
             var args = new object[] {str, null};
 
-            var success = (bool)converter.Invoke(null, args);
+            var success = (bool) converter.Invoke(null, args);
             converted = args[1];
             return success;
         }
@@ -74,9 +80,10 @@ namespace Ghoul.Native
         private static Dictionary<Type, MethodInfo> CreateConverterLookup()
         {
             return typeof(WindowPosition).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                .Where(mi => mi.Name == nameof(TryConvert) &&
-                             (mi.ReturnParameter?.ParameterType == typeof(bool)) &&
-                             (mi.GetParameters().Skip(1).FirstOrDefault()?.IsOut ?? false))
+                .Where(
+                    mi => mi.Name == nameof(TryConvert) &&
+                          (mi.ReturnParameter?.ParameterType == typeof(bool)) &&
+                          (mi.GetParameters().Skip(1).FirstOrDefault()?.IsOut ?? false))
                 .ToDictionary(
                     mi => mi.GetParameters()[1].ParameterType.GetElementType(),
                     mi => mi

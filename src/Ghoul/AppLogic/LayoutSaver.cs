@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Ghoul.AppLogic.Events;
 using Ghoul.Native;
 using Ghoul.Ui;
 using Ghoul.Utils;
@@ -17,10 +18,6 @@ namespace Ghoul.AppLogic
         void SaveCurrentLayout();
     }
 
-    public class LayoutAddedEvent : EventBase<string>
-    {
-    }
-
     internal class LayoutSaver
         : ILayoutSaver
     {
@@ -28,7 +25,7 @@ namespace Ghoul.AppLogic
         private readonly IUserInput _userInput;
         private readonly ISectionNameHelper _sectionNameHelper;
         private readonly IDesktopWindowUtil _desktopWindowUtil;
-        private readonly EventAggregator _eventAggregator;
+        private readonly IEventAggregator _eventAggregator;
 
         public LayoutSaver(
             IINIFile config,
@@ -36,7 +33,7 @@ namespace Ghoul.AppLogic
             ISectionNameHelper sectionNameHelper,
             IDesktopWindowUtil desktopWindowUtil,
             // TODO: change to IEventAggregator
-            EventAggregator eventAggregator
+            IEventAggregator eventAggregator
         )
         {
             _config = config;
@@ -74,7 +71,9 @@ namespace Ghoul.AppLogic
             RemoveAllAppLayoutSectionsFor(layoutName);
             AddAppLayoutSectionsFor(layoutName, processWindows);
             _config.Persist();
-            _eventAggregator.GetEvent<LayoutAddedEvent>().Publish(layoutName);
+            _eventAggregator
+                .GetEvent<LayoutAddedEvent>()
+                .Publish(layoutName);
         }
 
         private void AddAppLayoutSectionsFor(string layoutName, ProcessWindow[] processWindows)

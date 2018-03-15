@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using DryIoc;
 using Ghoul.AppLogic;
+using Ghoul.AppLogic.Events;
 using Ghoul.Utils;
+using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
 using PeanutButter.Utils;
@@ -29,10 +31,29 @@ namespace Ghoul
             AddRestoreMenusTo(menu, trayIcon, container);
             AddExitMenuItemTo(trayIcon);
             BindToLayoutAdded(menu, container);
+            BindDoubleClickToRestoreLast(container);
 
             trayIcon.Show();
 
             Application.Run();
+        }
+
+        private static void BindDoubleClickToRestoreLast(IContainer container)
+        {
+            var trayIcon = container.Resolve<ITrayIcon>();
+            var lastLayoutUtil = container.Resolve<ILastLayoutUtility>();
+            trayIcon.AddMouseClickHandler(
+                MouseClicks.Double,
+                MouseButtons.Left,
+                () => lastLayoutUtil.RestoreLastLayout()
+            );
+        }
+
+        private static void StoreLastRestoredLayout(
+            string layoutName,
+            IINIFile config)
+        {
+            config.SetValue(Constants.Sections.GENERAL, Constants.Keys.LAST_LAYOUT, layoutName);
         }
 
         private static void AddExitMenuItemTo(
@@ -62,7 +83,11 @@ namespace Ghoul
                     {
                         trayIcon.AddMenuItem(
                             s,
-                            () => restorer.RestoreLayout(s),
+                            () =>
+                            {
+                                restorer.RestoreLayout(s);
+                                StoreLastRestoredLayout(s, container.Resolve<IINIFile>());
+                            },
                             menu);
                     });
         }
@@ -70,15 +95,18 @@ namespace Ghoul
         private static void BindToLayoutAdded(MenuItem restoreMenu, IContainer container)
         {
             var trayIcon = container.Resolve<ITrayIcon>();
-            var eventAggregator = container.Resolve<EventAggregator>(); // TODO: replace with IEventAggregator
-            eventAggregator.GetEvent<LayoutAddedEvent>().Subscribe(newLayout =>
-            {
-                var toRemove = new List<MenuItem>();
-                foreach (MenuItem item in restoreMenu.MenuItems)
-                    toRemove.Add(item);
-                toRemove.ForEach(item => item.Parent.MenuItems.Remove(item));
-                AddRestoreMenusTo(restoreMenu, trayIcon, container);
-            });
+            var eventAggregator = container.Resolve<IEventAggregator>(); // TODO: replace with IEventAggregator
+            eventAggregator
+                .GetEvent<LayoutAddedEvent>()
+                .Subscribe(
+                    newLayout =>
+                    {
+                        var toRemove = new List<MenuItem>();
+                        foreach (MenuItem item in restoreMenu.MenuItems)
+                            toRemove.Add(item);
+                        toRemove.ForEach(item => item.Parent.MenuItems.Remove(item));
+                        AddRestoreMenusTo(restoreMenu, trayIcon, container);
+                    });
         }
 
 

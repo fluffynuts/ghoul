@@ -61,8 +61,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppLogic\ApplicationRestarter.cs" />
+    <Compile Include="AppLogic\Events\LayoutAddedEvent.cs" />
+    <Compile Include="AppLogic\Events\LayoutRestoredEvent.cs" />
+    <Compile Include="AppLogic\LastLayoutUtility.cs" />
+    <Compile Include="Native\WndProcHooker.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Bootstrapper.cs" />
     <Compile Include="Utils\CaseInsensitiveStringComparer.cs" />
+    <Compile Include="Utils\ConfigLocator.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Native\DesktopWindowUtil.cs" />
     <Compile Include="Ui\CheckListDialog.cs">
@@ -107,8 +117,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Ui\Resources.resx">
+    <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

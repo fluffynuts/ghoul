@@ -9,6 +9,7 @@
 
         public static class Sections
         {
+            public const string GENERAL = "general";
             public const string RESTORE_PREFIX = "restore: ";
             public const string APP_LAYOUT_PREFIX = "app-layout: ";
         }
@@ -18,6 +19,7 @@
             public const string POSITION = "position";
             public const string TITLE = "title";
             public const string EXECUTABLE = "executable";
+            public const string LAST_LAYOUT = "last-layout";
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
 using DryIoc;
 using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
@@ -32,25 +29,19 @@ namespace Ghoul.Utils
                     });
             container.RegisterDelegate<IINIFile>(LoadConfig, Reuse.Singleton);
             // TODO: replace with usage of IEventAggregator
-            container.RegisterDelegate(resolver => EventAggregator.Instance, Reuse.Singleton);
-            container.RegisterDelegate(r => trayIcon, Reuse.Singleton);
+            container.RegisterDelegate<IEventAggregator>(resolver => EventAggregator.Instance, Reuse.Singleton);
+            container.RegisterDelegate<ITrayIcon>(r => trayIcon, Reuse.Singleton);
             return container;
         }
 
         private static INIFile LoadConfig(IResolver resolver)
         {
-            var configLocation = FindConfig();
+            var configLocation = resolver.Resolve<IConfigLocator>().FindConfig();
             var result = new INIFile(configLocation);
             result.Persist(); // ensure config exists
             return result;
         }
 
-        private static string FindConfig()
-        {
-            var programPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-            // TODO: allow portable / user mode?
-            var programFolder = Path.GetDirectoryName(programPath) ?? Directory.GetCurrentDirectory();
-            return Path.Combine(programFolder, "ghoul.ini");
-        }
     }
+
 }

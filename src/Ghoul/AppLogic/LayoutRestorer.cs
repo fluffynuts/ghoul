@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Ghoul.AppLogic.Events;
 using Ghoul.Native;
 using PeanutButter.INIFile;
+using PeanutButter.TinyEventAggregator;
+using PeanutButter.TrayIcon;
 using PeanutButter.Utils;
 using Keys = Ghoul.Utils.Constants.Keys;
 
 namespace Ghoul.AppLogic
 {
-    internal interface ILayoutRestorer
+    public interface ILayoutRestorer
     {
         void RestoreLayout(string name);
     }
@@ -20,18 +25,24 @@ namespace Ghoul.AppLogic
         private readonly IApplicationRestarter _applicationRestarter;
         private readonly ISectionNameHelper _sectionNameHelper;
         private readonly IDesktopWindowUtil _desktopWindowUtil;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly ITrayIcon _trayIcon;
 
         public LayoutRestorer(
             IINIFile config,
             IApplicationRestarter applicationRestarter,
             ISectionNameHelper sectionNameHelper,
-            IDesktopWindowUtil desktopWindowUtil
+            IDesktopWindowUtil desktopWindowUtil,
+            IEventAggregator eventAggregator,
+            ITrayIcon trayIcon
         )
         {
             _config = config;
             _applicationRestarter = applicationRestarter;
             _sectionNameHelper = sectionNameHelper;
             _desktopWindowUtil = desktopWindowUtil;
+            _eventAggregator = eventAggregator;
+            _trayIcon = trayIcon;
         }
 
         public void RestoreLayout(string name)
@@ -52,6 +63,15 @@ namespace Ghoul.AppLogic
                             return;
                         ApplyLayout(window, section);
                     });
+            _eventAggregator
+                .GetEvent<LayoutRestoredEvent>()
+                .Publish(layout);
+            _trayIcon.ShowBalloonTipFor(
+                5000,
+                "Layout restored",
+                $"Layout '{layout}' was restored",
+                ToolTipIcon.Info
+            );
         }
 
         private string FindBestMatchFor(
