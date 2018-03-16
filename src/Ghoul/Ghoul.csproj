@@ -73,6 +73,7 @@
     <Compile Include="AppLogic\Events\LayoutSaveCompletedEvent.cs" />
     <Compile Include="AppLogic\Events\LayoutSaveStartedEvent.cs" />
     <Compile Include="AppLogic\LastLayoutUtility.cs" />
+    <Compile Include="Native\Win32Api\Enums.cs" />
     <Compile Include="Native\WndProcHooker.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,9 +86,7 @@
     <Compile Include="Utils\ConfigLocator.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Native\DesktopWindowUtil.cs" />
-    <Compile Include="Ui\CheckListDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Ui\CheckListDialog.cs" />
     <Compile Include="Ui\CheckListDialog.Designer.cs">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </Compile>
@@ -110,8 +109,9 @@
     <Compile Include="AppLogic\SectionNameHelper.cs" />
     <Compile Include="AppLogic\StringExtensions.cs" />
     <Compile Include="Ui\UserInput.cs" />
-    <Compile Include="Native\Win32Api.cs" />
+    <Compile Include="Native\Win32Api\Functions.cs" />
     <Compile Include="Native\WindowPosition.cs" />
+    <Compile Include="Ui\IconProvider.cs" />
     <EmbeddedResource Include="Ui\CheckListDialog.resx">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -151,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\minecraft-zombie.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\minecraft-ghast.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

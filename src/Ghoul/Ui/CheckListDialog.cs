@@ -9,6 +9,30 @@ using PeanutButter.Utils;
 
 namespace Ghoul.Ui
 {
+    public interface ICheckListDialogFactory
+    {
+        CheckListDialog<T> Create<T>(T[] items, string[] interestingProperties);
+    }
+
+    public class CheckListDialogFactory
+        : ICheckListDialogFactory
+    {
+        private readonly IIconProvider _iconProvider;
+
+        public CheckListDialogFactory(IIconProvider iconProvider)
+        {
+            _iconProvider = iconProvider;
+        }
+
+        public CheckListDialog<T> Create<T>(T[] items, string[] interestingProperties)
+        {
+            return new CheckListDialog<T>(items, interestingProperties)
+            {
+                Icon = _iconProvider.MainIcon()
+            };
+        }
+    }
+
     public partial class CheckListDialog<T> : Form
     {
         private readonly string[] _interestingProperties;
@@ -36,7 +60,6 @@ namespace Ghoul.Ui
             listView1.OwnerDraw = true;
             listView1.View = View.Details;
             listView1.CheckBoxes = true;
-            Icon = Resources.main_icon;
         }
 
         private ColumnHeader[] GetColumnHeadersInOrder()
@@ -179,7 +202,7 @@ namespace Ghoul.Ui
 
         private int GetColumnAt(int xpos)
         {
-            xpos += Win32Api.GetScrollPos(listView1.Handle, Win32Api.ScrollbarOrientation.SB_HORZ);
+            xpos += Win32Api.GetScrollPos(listView1.Handle, Win32Api.ScrollbarOrientation.Horizontal);
             for (var i = 0; i < _headers.Length; i++)
             {
                 xpos -= _headers[i].Width;

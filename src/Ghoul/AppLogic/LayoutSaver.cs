@@ -26,14 +26,15 @@ namespace Ghoul.AppLogic
         private readonly ISectionNameHelper _sectionNameHelper;
         private readonly IDesktopWindowUtil _desktopWindowUtil;
         private readonly IEventAggregator _eventAggregator;
+        private readonly ICheckListDialogFactory _dialogFactory;
 
         public LayoutSaver(
             IINIFile config,
             IUserInput userInput,
             ISectionNameHelper sectionNameHelper,
             IDesktopWindowUtil desktopWindowUtil,
-            // TODO: change to IEventAggregator
-            IEventAggregator eventAggregator
+            IEventAggregator eventAggregator,
+            ICheckListDialogFactory dialogFactory
         )
         {
             _config = config;
@@ -41,6 +42,7 @@ namespace Ghoul.AppLogic
             _sectionNameHelper = sectionNameHelper;
             _desktopWindowUtil = desktopWindowUtil;
             _eventAggregator = eventAggregator;
+            _dialogFactory = dialogFactory;
         }
 
         public void SaveCurrentLayout()
@@ -71,7 +73,7 @@ namespace Ghoul.AppLogic
             // TODO: verify with user when re-using a layout name: it will overwrite the existing settings
 
             var processWindows = _desktopWindowUtil.ListWindows();
-            var selector = new CheckListDialog<ProcessWindow>(
+            var selector = _dialogFactory.Create(
                 processWindows,
                 new[]
                 {

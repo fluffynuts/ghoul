@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DryIoc;
+using Ghoul.Ui;
 using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
@@ -32,7 +33,7 @@ namespace Ghoul.Utils
             container.RegisterDelegate<IEventAggregator>(resolver => EventAggregator.Instance, Reuse.Singleton);
             container.RegisterDelegate<ITrayIcon>(
                 r => {
-                    var trayIcon = new TrayIcon(Resources.main_icon);
+                    var trayIcon = new TrayIcon(r.Resolve<IIconProvider>().MainIcon());
                     // ReSharper disable once LocalizableElement
                     trayIcon.NotifyIcon.Text = "Ghoul - Desktop layout resurrector";
                     return trayIcon;
@@ -40,7 +41,11 @@ namespace Ghoul.Utils
                 Reuse.Singleton);
 
             container.RegisterDelegate<ITrayIconAnimator>(
-                r => new TrayIconAnimator(r.Resolve<ITrayIcon>(), Resources.main_icon, Resources.hourglass),
+                r =>
+                {
+                    var iconProvider = r.Resolve<IIconProvider>();
+                    return new TrayIconAnimator(r.Resolve<ITrayIcon>(), iconProvider.MainIcon(), iconProvider.WaitIcon());
+                },
                 Reuse.Singleton);
             return container;
         }
