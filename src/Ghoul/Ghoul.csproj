@@ -69,6 +69,9 @@
     <Compile Include="AppLogic\ApplicationRestarter.cs" />
     <Compile Include="AppLogic\Events\LayoutAddedEvent.cs" />
     <Compile Include="AppLogic\Events\LayoutRestoredEvent.cs" />
+    <Compile Include="AppLogic\Events\LayoutRestoreStartedEvent.cs" />
+    <Compile Include="AppLogic\Events\LayoutSaveCompletedEvent.cs" />
+    <Compile Include="AppLogic\Events\LayoutSaveStartedEvent.cs" />
     <Compile Include="AppLogic\LastLayoutUtility.cs" />
     <Compile Include="Native\WndProcHooker.cs" />
     <Compile Include="Resources.Designer.cs">

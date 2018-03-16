@@ -73,7 +73,34 @@ namespace Ghoul.Native
             int y,
             int width,
             int height,
-            uint flags);
+            SetWindowPosFlags flags);
+
+        [Flags]
+        public enum SetWindowPosFlags
+        {
+            Async = 0x400,
+            DeferRaise = 0x200,
+            DrawFrame = 0x0020,
+            HideWindow = 0x0080,
+            NoActivate = 0x0010,
+            NoCopyBits = 0x0100,
+            NoMove = 0x0002,
+            KeepOwnerZIndex = 0x0200,
+            NoRedraw = 0x0008,
+            NoSendChanging = 0x0400,
+            NoSize = 0x0001,
+            KeepZIndex = 0x0004,
+            ShowWindow = 0x0040
+        }
+
+        [DllImport("gdi32.dll", CharSet = CharSet.Auto)]
+        public static extern int GetDeviceCaps(IntPtr hdc, DeviceCapabilities deviceCapabilities);
+
+        public enum DeviceCapabilities
+        {
+            VerticalResolution = 10,
+            DesktopVerticalResolution = 117
+        }
 
         public static class WindowInsertionSpecialValues
         {

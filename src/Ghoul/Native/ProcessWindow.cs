@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -31,7 +32,7 @@ namespace Ghoul.Native
             }
             catch
             {
-                return "";  // safer for any caller
+                return ""; // safer for any caller
             }
         }
 
@@ -66,13 +67,14 @@ namespace Ghoul.Native
         {
             Win32Api.SetWindowPos(
                 Handle,
-                IntPtr.Zero, 
+                IntPtr.Zero,
                 left,
                 top,
                 width,
                 height,
-                0
+                Win32Api.SetWindowPosFlags.KeepZIndex
             );
+
         }
     }
 }
