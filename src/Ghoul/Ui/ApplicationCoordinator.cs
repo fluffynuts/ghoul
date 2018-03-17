@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Ghoul.AppLogic;
 using Ghoul.AppLogic.Events;
@@ -134,6 +135,7 @@ namespace Ghoul.Ui
         )
         {
             _sectionNameHelper.ListLayoutNames()
+                .OrderBy(s => s)
                 .ForEach(
                     s =>
                     {
