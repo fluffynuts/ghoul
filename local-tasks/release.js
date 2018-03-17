@@ -16,6 +16,10 @@ gulp.task("release", "Builds the release installer", ["increment-release-version
 
 gulp.task("increment-release-version", ["test-dotnet"], () => {
     return promisify(() => {
+        if (process.env.NO_INCREMENT) {
+            console.log("--- not incrementing release version ---");
+            return;
+        }
         const lines = fs.readFileSync("ghoul.iss", { encoding: "utf8" })
             .split("\r\n")
             .map(l => {
@@ -25,6 +29,7 @@ gulp.task("increment-release-version", ["test-dotnet"], () => {
                         version = parts[parts.length - 1].replace(/"/g, ""),
                         versionParts = version.split("."),
                         newVersion = `${versionParts[0]}.${parseInt(versionParts[1]) + 1}`;
+                    console.log(`--- version incremented to: ${newVersion} ---`);
                     return `#define MyAppVersion "${newVersion}"`;
                 }
                 return l;
