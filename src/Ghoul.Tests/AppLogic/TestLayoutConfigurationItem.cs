@@ -4,6 +4,7 @@ using NExpect;
 using NUnit.Framework;
 using PeanutButter.RandomGenerators;
 using PeanutButter.Utils;
+using static NExpect.Expectations;
 
 namespace Ghoul.Tests.AppLogic
 {
@@ -26,7 +27,7 @@ namespace Ghoul.Tests.AppLogic
                 var sut = Create(processWindow);
                 var result = sut.GetPropertyValue(target);
                 // Assert
-                Expectations.Expect(result).To.Deep.Equal(expected);
+                Expect(result).To.Deep.Equal(expected);
             }
 
             private LayoutConfigurationItem Create(

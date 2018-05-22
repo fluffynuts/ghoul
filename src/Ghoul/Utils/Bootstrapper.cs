@@ -26,7 +26,17 @@ namespace Ghoul.Utils
                         );
                         if (implementation == null)
                             return;
-                        container.Register(serviceType, implementation, Reuse.Singleton);
+                        try
+                        {
+                            container.Register(serviceType, implementation, Reuse.Singleton);
+                        }
+                        catch (ContainerException)
+                        {
+                            /*
+                             * ignore: could be from an interface we don't expect to inject
+                             * -> tests should cover all interesting constructables
+                             */
+                        }
                     });
             container.RegisterDelegate<IINIFile>(LoadConfig, Reuse.Singleton);
             // TODO: replace with usage of IEventAggregator

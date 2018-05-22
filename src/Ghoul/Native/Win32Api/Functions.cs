@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+
 #pragma warning disable 169
 
 // ReSharper disable InconsistentNaming
@@ -12,14 +14,6 @@ namespace Ghoul.Native
 {
     public static partial class Win32Api
     {
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
         [DllImport("oleacc.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetProcessHandleFromHwnd(IntPtr hwnd);
 
@@ -27,7 +21,7 @@ namespace Ghoul.Native
         public static extern int GetProcessId(IntPtr handle);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern int GetWindowRect(IntPtr handle, out RECT rect);
+        public static extern int GetWindowRect(IntPtr handle, out Rect rect);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int GetScrollPos(IntPtr hwnd, ScrollbarOrientation orientation);
@@ -75,13 +69,6 @@ namespace Ghoul.Native
         {
             VerticalResolution = 10,
             DesktopVerticalResolution = 117
-        }
-
-        // Native representation of a point.
-        public struct POINT
-        {
-            public int X;
-            public int Y;
         }
 
         // A callback to a Win32 window procedure (wndproc):
@@ -156,10 +143,30 @@ namespace Ghoul.Native
                 (int) ((ulParam & 0xffff0000) >> 16));
         }
 
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowPlacement(
+            IntPtr hwnd, ref WindowPlacement windowPlacement);
 
-    }
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetWindowPlacement(
+            IntPtr hwnd, ref WindowPlacement windowPlacment);
 
-    public partial class Win32Api
-    {
+        public static WindowPlacement GetWindowPlacementByHandle(IntPtr hwnd)
+        {
+            var result = new WindowPlacement();
+            result.Length = Marshal.SizeOf(result);
+            GetWindowPlacement(hwnd, ref result);
+            return result;
+        }
+
+        public static void SetWindowPlacementByHandle(
+            IntPtr hwnd,
+            WindowPlacement windowPlacement
+        )
+        {
+            SetWindowPlacement(hwnd, ref windowPlacement);
+        }
     }
 }

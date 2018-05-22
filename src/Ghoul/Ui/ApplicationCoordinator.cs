@@ -1,15 +1,68 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ghoul.AppLogic;
 using Ghoul.AppLogic.Events;
 using Ghoul.Utils;
+using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
 using PeanutButter.Utils;
 
 namespace Ghoul.Ui
 {
+    public interface IConfigWatcher
+    {
+        void StartWatching();
+        void StopWatching();
+    }
+    
+    public class ConfigWatcher: IConfigWatcher
+    {
+        private readonly IConfigLocator _configLocator;
+        private readonly IEventAggregator _eventAggregator;
+        private FileSystemWatcher _watcher;
+
+        public ConfigWatcher(
+            IConfigLocator configLocator,
+            IEventAggregator eventAggregator)
+        {
+            _configLocator = configLocator;
+            _eventAggregator = eventAggregator;
+        }
+
+        public void StartWatching()
+        {
+            var watchPath = Path.GetDirectoryName(_configLocator.FindConfig());
+            if (watchPath == null)
+                return;
+            _watcher = new FileSystemWatcher(watchPath)
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Filter = "*.ini"
+            };
+            _watcher.Changed += OnConfigChanged;
+            _watcher.EnableRaisingEvents = true;
+        }
+
+        public void StopWatching()
+        {
+            _watcher.EnableRaisingEvents = false;
+            _watcher.Changed -= OnConfigChanged;
+        }
+
+        private void OnConfigChanged(object sender, FileSystemEventArgs e)
+        {
+            if (string.Equals(e.FullPath, _configLocator.FindConfig(), StringComparison.OrdinalIgnoreCase))
+            {
+                _eventAggregator.GetEvent<ConfigChangedEvent>().Publish(_configLocator.FindConfig());
+            }
+        }
+    }
+
     public interface IApplicationCoordinator
     {
         void Init();
@@ -26,6 +79,10 @@ namespace Ghoul.Ui
         private readonly IEventAggregator _eventAggregator;
         private readonly ILastLayoutUtility _lastLayoutUtility;
         private readonly ITrayIconAnimator _animator;
+        private readonly IConfigLocator _configLocator;
+        private readonly IConfigWatcher _configWatcher;
+        private readonly IINIFile _config;
+        private bool _suppressExternalFileChangeHandling;
 
         public ApplicationCoordinator(
             ILayoutSaver layoutSaver,
@@ -34,7 +91,10 @@ namespace Ghoul.Ui
             ISectionNameHelper sectionNameHelper,
             IEventAggregator eventAggregator,
             ILastLayoutUtility lastLayoutUtility,
-            ITrayIconAnimator animator
+            ITrayIconAnimator animator,
+            IConfigLocator configLocator,
+            IConfigWatcher configWatcher,
+            IINIFile config
         )
         {
             _layoutSaver = layoutSaver;
@@ -44,6 +104,9 @@ namespace Ghoul.Ui
             _eventAggregator = eventAggregator;
             _lastLayoutUtility = lastLayoutUtility;
             _animator = animator;
+            _configLocator = configLocator;
+            _configWatcher = configWatcher;
+            _config = config;
         }
 
         public void Init()
@@ -56,8 +119,28 @@ namespace Ghoul.Ui
             _eventAggregator.GetEvent<LayoutRestoredEvent>().Subscribe(Rest);
             _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Subscribe(Busy);
             _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Subscribe(Rest);
+            
+            _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Subscribe(SuppressExternalFileChangeHandling);
+            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Subscribe(UnsuppressExternalFileChangeHandling);
+            _eventAggregator.GetEvent<ConfigChangedEvent>().Subscribe(OnConfigChangedExternally);
 
+            _configWatcher.StartWatching();
             _trayIcon.Show();
+        }
+
+        private void UnsuppressExternalFileChangeHandling(bool obj)
+        {
+            _suppressExternalFileChangeHandling = false;
+        }
+
+        private void SuppressExternalFileChangeHandling(bool obj)
+        {
+            _suppressExternalFileChangeHandling = true;
+        }
+
+        private void OnConfigChangedExternally(string obj)
+        {
+            _config.Reload();
         }
 
         private void Rest<T>(T arg)
@@ -75,19 +158,34 @@ namespace Ghoul.Ui
             AddSaveLayoutMenuItem();
             var restoreMenuItem = AddRestoreLayoutMenu();
             AddRestoreMenusTo(restoreMenuItem);
+            AddSeparator();
+            AddOpenConfigMenuItem();
             AddExitMenuItem();
             return restoreMenuItem;
+        }
+
+        private void AddOpenConfigMenuItem()
+        {
+            _trayIcon.AddMenuItem("Edit config...", () =>
+            {
+                Process.Start(_configLocator.FindConfig());
+            });
+        }
+
+        private void AddSeparator()
+        {
+            _trayIcon.AddMenuSeparator();
         }
 
         private void AddExitMenuItem(
         )
         {
-            _trayIcon.AddMenuSeparator();
             _trayIcon.AddMenuItem(
                 "Exit",
                 () =>
                 {
                     _trayIcon.Hide();
+                    _configWatcher.StopWatching();
                     Application.Exit();
                 });
         }

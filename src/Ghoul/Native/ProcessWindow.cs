@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Text;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -48,7 +47,8 @@ namespace Ghoul.Native
             IntPtr handle)
         {
             Win32Api.GetWindowRect(handle, out var result);
-            return new WindowPosition(result);
+            var windowPlacement = Win32Api.GetWindowPlacementByHandle(handle);
+            return new WindowPosition(result, windowPlacement);
         }
 
         private string GetCaptionFor(

@@ -10,12 +10,22 @@ using PeanutButter.Utils;
 
 namespace Ghoul.Native
 {
+    public interface IRectangle
+    {
+        int Top { get; }
+        int Left { get; }
+        int Width { get; }
+        int Height { get; }
+    }
+
     public class WindowPosition
+        : IRectangle
     {
         public int Top { get; private set; }
         public int Left { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public Win32Api.WindowPlacement WindowPlacement { get; private set; }
 
         private static readonly Dictionary<string, PropertyInfo> PropertyInfos =
             typeof(WindowPosition).GetProperties().ToDictionary(
@@ -23,12 +33,16 @@ namespace Ghoul.Native
                 pi => pi,
                 new CaseInsensitiveStringComparer());
 
-        public WindowPosition(Win32Api.RECT rect)
+        public WindowPosition(
+            Win32Api.Rect rect,
+            Win32Api.WindowPlacement windowPlacement
+        )
         {
             Top = rect.Top;
             Left = rect.Left;
             Width = rect.Right - rect.Left;
             Height = rect.Bottom - rect.Top;
+            WindowPlacement = windowPlacement;
         }
 
         public WindowPosition(string serialized)

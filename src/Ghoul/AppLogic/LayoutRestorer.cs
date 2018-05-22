@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Ghoul.AppLogic.Events;
 using Ghoul.Native;
+using Ghoul.Utils;
 using PeanutButter.INIFile;
 using PeanutButter.TinyEventAggregator;
 using PeanutButter.TrayIcon;
@@ -26,6 +27,7 @@ namespace Ghoul.AppLogic
         private readonly IDesktopWindowUtil _desktopWindowUtil;
         private readonly IEventAggregator _eventAggregator;
         private readonly ITrayIcon _trayIcon;
+        private readonly IDeviceReenumerator _deviceReenumerator;
 
         public LayoutRestorer(
             IINIFile config,
@@ -33,7 +35,8 @@ namespace Ghoul.AppLogic
             ISectionNameHelper sectionNameHelper,
             IDesktopWindowUtil desktopWindowUtil,
             IEventAggregator eventAggregator,
-            ITrayIcon trayIcon
+            ITrayIcon trayIcon,
+            IDeviceReenumerator deviceReenumerator
         )
         {
             _config = config;
@@ -42,11 +45,13 @@ namespace Ghoul.AppLogic
             _desktopWindowUtil = desktopWindowUtil;
             _eventAggregator = eventAggregator;
             _trayIcon = trayIcon;
+            _deviceReenumerator = deviceReenumerator;
         }
 
         public void RestoreLayout(string name)
         {
             _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Publish(name);
+            _deviceReenumerator.Reenumerate();
             _applicationRestarter.RestartApplicationsForLayout(name);
             RestoreWindowPositionsFor(name);
         }

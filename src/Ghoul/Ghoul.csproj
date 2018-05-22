@@ -38,17 +38,21 @@
     <ApplicationIcon>Resources\minecraft-zombie.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.INI.1.2.223\lib\net452\PeanutButter.INI.dll</HintPath>
+    <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PeanutButter.INI.1.2.235\lib\net452\PeanutButter.INI.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="PeanutButter.TinyEventAggregator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TinyEventAggregator.1.2.223\lib\net452\PeanutButter.TinyEventAggregator.dll</HintPath>
+    <Reference Include="PeanutButter.TinyEventAggregator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PeanutButter.TinyEventAggregator.1.2.235\lib\net452\PeanutButter.TinyEventAggregator.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.223\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
+    <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PeanutButter.TrayIcon.1.2.235\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.Utils.1.2.223\lib\net452\PeanutButter.Utils.dll</HintPath>
+    <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\PeanutButter.Utils.1.2.235\lib\net452\PeanutButter.Utils.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppLogic\ApplicationRestarter.cs" />
+    <Compile Include="AppLogic\Events\ConfigChangedEvent.cs" />
     <Compile Include="AppLogic\Events\LayoutAddedEvent.cs" />
     <Compile Include="AppLogic\Events\LayoutRestoredEvent.cs" />
     <Compile Include="AppLogic\Events\LayoutRestoreStartedEvent.cs" />
@@ -74,6 +79,7 @@
     <Compile Include="AppLogic\Events\LayoutSaveStartedEvent.cs" />
     <Compile Include="AppLogic\LastLayoutUtility.cs" />
     <Compile Include="Native\Win32Api\Enums.cs" />
+    <Compile Include="Native\Win32Api\Structs.cs" />
     <Compile Include="Native\WndProcHooker.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -112,6 +118,7 @@
     <Compile Include="Native\Win32Api\Functions.cs" />
     <Compile Include="Native\WindowPosition.cs" />
     <Compile Include="Ui\IconProvider.cs" />
+    <Compile Include="Utils\DeviceReenumerator.cs" />
     <EmbeddedResource Include="Ui\CheckListDialog.resx">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
     </EmbeddedResource>

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows.Forms;
 using Ghoul.Native;
+
+// ReSharper disable LocalizableElement
 
 namespace Discovery
 {
@@ -30,7 +27,7 @@ namespace Discovery
             var desktop = graphics.GetHdc();
             var logical = Win32Api.GetDeviceCaps(desktop, Win32Api.DeviceCapabilities.VerticalResolution);
             var physical = Win32Api.GetDeviceCaps(desktop, Win32Api.DeviceCapabilities.DesktopVerticalResolution);
-            ScalingLabel.Text = ((decimal) logical / (decimal) physical).ToString();
+            ScalingLabel.Text = (logical / (decimal) physical).ToString(CultureInfo.InvariantCulture);
         }
 
         private void Form1_Move(object sender, EventArgs e)
