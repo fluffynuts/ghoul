@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NCrash, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\NCrash.1.0.0\lib\net40\NCrash.dll</HintPath>
+    </Reference>
+    <Reference Include="NCrash.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\NCrash.WinForms.1.0.0\lib\net40\NCrash.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="PeanutButter.TrayIcon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\PeanutButter.TrayIcon.1.2.235\lib\net452\PeanutButter.TrayIcon.dll</HintPath>
       <Private>True</Private>

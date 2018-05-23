@@ -38,6 +38,18 @@
     <ApplicationIcon>Resources\minecraft-zombie.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NCrash, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\NCrash.1.0.0\lib\net40\NCrash.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NCrash.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\NCrash.WinForms.1.0.0\lib\net40\NCrash.WinForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PeanutButter.INI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\PeanutButter.INI.1.2.235\lib\net452\PeanutButter.INI.dll</HintPath>
       <Private>True</Private>
@@ -87,6 +99,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Ui\ApplicationCoordinator.cs" />
+    <Compile Include="Ui\ConfigWatcher.cs" />
+    <Compile Include="Ui\ExceptionLogger.cs" />
     <Compile Include="Utils\Bootstrapper.cs" />
     <Compile Include="Utils\CaseInsensitiveStringComparer.cs" />
     <Compile Include="Utils\ConfigLocator.cs" />

@@ -48,12 +48,27 @@ namespace Ghoul.AppLogic
             _deviceReenumerator = deviceReenumerator;
         }
 
+        private readonly Queue<string> _restoreQueue = new Queue<string>();
+
         public void RestoreLayout(string name)
         {
-            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Publish(name);
-            _deviceReenumerator.Reenumerate();
-            _applicationRestarter.RestartApplicationsForLayout(name);
-            RestoreWindowPositionsFor(name);
+            _restoreQueue.Enqueue(name);
+            ProcessRestoreQueue();
+        }
+
+        private void ProcessRestoreQueue()
+        {
+            lock (_restoreQueue)
+            {
+                while (_restoreQueue.Any())
+                {
+                    var name = _restoreQueue.Dequeue();
+                    _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Publish(name);
+                    _deviceReenumerator.Reenumerate();
+                    _applicationRestarter.RestartApplicationsForLayout(name);
+                    RestoreWindowPositionsFor(name);
+                }
+            }
         }
 
         private void RestoreWindowPositionsFor(string layout)

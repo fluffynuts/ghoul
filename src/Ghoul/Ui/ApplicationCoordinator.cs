@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Ghoul.AppLogic;
 using Ghoul.AppLogic.Events;
@@ -14,55 +15,6 @@ using PeanutButter.Utils;
 
 namespace Ghoul.Ui
 {
-    public interface IConfigWatcher
-    {
-        void StartWatching();
-        void StopWatching();
-    }
-    
-    public class ConfigWatcher: IConfigWatcher
-    {
-        private readonly IConfigLocator _configLocator;
-        private readonly IEventAggregator _eventAggregator;
-        private FileSystemWatcher _watcher;
-
-        public ConfigWatcher(
-            IConfigLocator configLocator,
-            IEventAggregator eventAggregator)
-        {
-            _configLocator = configLocator;
-            _eventAggregator = eventAggregator;
-        }
-
-        public void StartWatching()
-        {
-            var watchPath = Path.GetDirectoryName(_configLocator.FindConfig());
-            if (watchPath == null)
-                return;
-            _watcher = new FileSystemWatcher(watchPath)
-            {
-                NotifyFilter = NotifyFilters.LastWrite,
-                Filter = "*.ini"
-            };
-            _watcher.Changed += OnConfigChanged;
-            _watcher.EnableRaisingEvents = true;
-        }
-
-        public void StopWatching()
-        {
-            _watcher.EnableRaisingEvents = false;
-            _watcher.Changed -= OnConfigChanged;
-        }
-
-        private void OnConfigChanged(object sender, FileSystemEventArgs e)
-        {
-            if (string.Equals(e.FullPath, _configLocator.FindConfig(), StringComparison.OrdinalIgnoreCase))
-            {
-                _eventAggregator.GetEvent<ConfigChangedEvent>().Publish(_configLocator.FindConfig());
-            }
-        }
-    }
-
     public interface IApplicationCoordinator
     {
         void Init();
@@ -72,6 +24,7 @@ namespace Ghoul.Ui
     public class ApplicationCoordinator
         : IApplicationCoordinator
     {
+        public const int MAX_RELOAD_ATTEMPTS = 5;
         private readonly ILayoutSaver _layoutSaver;
         private readonly ITrayIcon _trayIcon;
         private readonly ILayoutRestorer _layoutRestorer;
@@ -82,6 +35,7 @@ namespace Ghoul.Ui
         private readonly IConfigLocator _configLocator;
         private readonly IConfigWatcher _configWatcher;
         private readonly IINIFile _config;
+        private readonly IExceptionLogger _exceptionLogger;
         private bool _suppressExternalFileChangeHandling;
 
         public ApplicationCoordinator(
@@ -94,7 +48,8 @@ namespace Ghoul.Ui
             ITrayIconAnimator animator,
             IConfigLocator configLocator,
             IConfigWatcher configWatcher,
-            IINIFile config
+            IINIFile config,
+            IExceptionLogger exceptionLogger
         )
         {
             _layoutSaver = layoutSaver;
@@ -107,6 +62,7 @@ namespace Ghoul.Ui
             _configLocator = configLocator;
             _configWatcher = configWatcher;
             _config = config;
+            _exceptionLogger = exceptionLogger;
         }
 
         public void Init()
@@ -128,19 +84,47 @@ namespace Ghoul.Ui
             _trayIcon.Show();
         }
 
-        private void UnsuppressExternalFileChangeHandling(bool obj)
+        private void UnsuppressExternalFileChangeHandling(bool _)
         {
             _suppressExternalFileChangeHandling = false;
         }
 
-        private void SuppressExternalFileChangeHandling(bool obj)
+        private void SuppressExternalFileChangeHandling(bool _)
         {
             _suppressExternalFileChangeHandling = true;
         }
 
         private void OnConfigChangedExternally(string obj)
         {
-            _config.Reload();
+            if (_suppressExternalFileChangeHandling)
+            {
+                return;
+            }
+            AttemptConfigReload();
+        }
+
+        private void AttemptConfigReload(int attempt = 0)
+        {
+            try
+            {
+                _config.Reload();
+            }
+            catch (IOException ex)
+            {
+                if (++attempt > MAX_RELOAD_ATTEMPTS)
+                {
+                    _exceptionLogger.Log($"Giving up on config reload after {MAX_RELOAD_ATTEMPTS} attempts", ex);
+                }
+                else
+                {
+                    Thread.Sleep(attempt * 1000);
+                    AttemptConfigReload(attempt);
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptionLogger.Log("Non-io-related exception whilst attempting config reload", ex);
+            }
         }
 
         private void Rest<T>(T arg)
