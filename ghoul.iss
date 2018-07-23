@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Ghoul"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "fluffynuts"
 #define MyAppURL "https://github.com/fluffynuts/ghoul"
 #define MyAppExeName "Ghoul.exe"
