@@ -35,7 +35,7 @@ namespace Ghoul.Ui
         private readonly IConfigLocator _configLocator;
         private readonly IConfigWatcher _configWatcher;
         private readonly IINIFile _config;
-        private readonly IExceptionLogger _exceptionLogger;
+        private readonly ILogger _logger;
         private bool _suppressExternalFileChangeHandling;
 
         public ApplicationCoordinator(
@@ -49,7 +49,7 @@ namespace Ghoul.Ui
             IConfigLocator configLocator,
             IConfigWatcher configWatcher,
             IINIFile config,
-            IExceptionLogger exceptionLogger
+            ILogger logger
         )
         {
             _layoutSaver = layoutSaver;
@@ -62,7 +62,7 @@ namespace Ghoul.Ui
             _configLocator = configLocator;
             _configWatcher = configWatcher;
             _config = config;
-            _exceptionLogger = exceptionLogger;
+            _logger = logger;
         }
 
         public void Init()
@@ -113,7 +113,7 @@ namespace Ghoul.Ui
             {
                 if (++attempt > MAX_RELOAD_ATTEMPTS)
                 {
-                    _exceptionLogger.Log($"Giving up on config reload after {MAX_RELOAD_ATTEMPTS} attempts", ex);
+                    _logger.LogError($"Giving up on config reload after {MAX_RELOAD_ATTEMPTS} attempts", ex);
                 }
                 else
                 {
@@ -123,7 +123,7 @@ namespace Ghoul.Ui
             }
             catch (Exception ex)
             {
-                _exceptionLogger.Log("Non-io-related exception whilst attempting config reload", ex);
+                _logger.LogError("Non-io-related exception whilst attempting config reload", ex);
             }
         }
 

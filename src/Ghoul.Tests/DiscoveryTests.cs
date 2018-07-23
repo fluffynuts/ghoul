@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Ghoul.Native;
+using Ghoul.Ui;
 using Ghoul.Utils;
+using NSubstitute;
 using NUnit.Framework;
+using PeanutButter.INIFile;
 using PeanutButter.Utils;
 
 namespace Ghoul.Tests
@@ -142,7 +146,10 @@ namespace Ghoul.Tests
         [Explicit]
         public void ReenumerateDevices()
         {
-            var sut = new DeviceReenumerator();
+            var config = Substitute.For<IINIFile>();
+            var general = new Dictionary<string, string>() { ["DeviceEnumeration"] = "true" };
+            config["general"].Returns(general);
+            var sut = new DeviceReenumerator(Substitute.For<ILogger>(), config, Substitute.For<IConfigLocator>());
             sut.Reenumerate();
         }
     }
