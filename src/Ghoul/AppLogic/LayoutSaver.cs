@@ -52,7 +52,8 @@ namespace Ghoul.AppLogic
             {
                 var layoutName = _userInput.Prompt(
                     "Enter name for layout",
-                    "Please enter a name for the layout to be saved").UserInput;
+                    "Please enter a name for the layout to be saved",
+                    _config.EnumerateLayouts().ToArray()).UserInput;
                 if (string.IsNullOrWhiteSpace(layoutName))
                     return;
 
@@ -69,7 +70,7 @@ namespace Ghoul.AppLogic
 
         private void SaveCurrentToConfig(string layoutName)
         {
-// TODO: better input of layout names
+            // TODO: better input of layout names
             // TODO: verify with user when re-using a layout name: it will overwrite the existing settings
 
             var processWindows = _desktopWindowUtil.ListWindows();

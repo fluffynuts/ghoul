@@ -76,5 +76,13 @@ namespace Ghoul.Native
             );
 
         }
+
+        public void Restore()
+        {
+            if (Position.WindowPlacement.IsMinimized)
+            { 
+                Win32Api.ShowWindow(Handle, Win32Api.ShowWindowEnum.Restore);
+            }
+        }
     }
 }

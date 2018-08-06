@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestConfigExtensions.cs" />
     <Compile Include="DiscoveryTests.cs" />
     <Compile Include="Builders\ProcessWindowBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

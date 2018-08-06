@@ -103,6 +103,7 @@
     <Compile Include="Ui\ExceptionLogger.cs" />
     <Compile Include="Utils\Bootstrapper.cs" />
     <Compile Include="Utils\CaseInsensitiveStringComparer.cs" />
+    <Compile Include="Utils\ConfigExtensions.cs" />
     <Compile Include="Utils\ConfigLocator.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Native\DesktopWindowUtil.cs" />

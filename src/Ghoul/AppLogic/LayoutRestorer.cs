@@ -183,6 +183,7 @@ namespace Ghoul.AppLogic
             try
             {
                 var windowPosition = new WindowPosition(_config.GetValue(section, Keys.POSITION));
+                window.Restore();
                 window.MoveTo(windowPosition.Left, windowPosition.Top, windowPosition.Width, windowPosition.Height);
             }
             catch

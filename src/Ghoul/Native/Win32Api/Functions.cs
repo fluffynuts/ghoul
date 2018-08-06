@@ -168,5 +168,9 @@ namespace Ghoul.Native
         {
             SetWindowPlacement(hwnd, ref windowPlacement);
         }
+        
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
     }
 }

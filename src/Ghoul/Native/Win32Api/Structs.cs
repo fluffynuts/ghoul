@@ -28,7 +28,14 @@ namespace Ghoul.Native
             public Point MinimumPosition;
             public Point MaximumPosition;
             public Rectangle NormalPosition;
+            
+            public bool IsMinimized => 
+                ShowCommands == ShowWindowCommands.Minimized;
+
+            public bool IsMaximized =>
+                ShowCommands == ShowWindowCommands.Maximized;
         }
+
 
         public enum ShowWindowCommands
         {

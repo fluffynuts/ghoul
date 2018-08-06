@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
+using PeanutButter.Utils;
 
 namespace Ghoul.Ui
 {
@@ -6,11 +8,16 @@ namespace Ghoul.Ui
     {
         private readonly string _caption;
 
-        public PromptForm(string caption, string message)
+        public PromptForm(
+            string caption, 
+            string message,
+            params string[] options)
         {
             InitializeComponent();
             _caption = caption;
             label1.Text = message;
+            comboBox1.Items.Clear();
+            comboBox1.Items.AddRange(options.Cast<object>().ToArray());
         }
 
         public IPromptResult Prompt()
@@ -20,7 +27,7 @@ namespace Ghoul.Ui
             return new PromptResult(
                 result,
                 result == DialogResult.OK
-                    ? textBox1.Text
+                    ? comboBox1.Text
                     : ""
             );
         }
@@ -29,7 +36,8 @@ namespace Ghoul.Ui
         {
             if (e.KeyChar == 13)
             {
-                button1.PerformClick();
+                //button1.PerformClick();
+                MessageBox.Show(comboBox1.Text);
             }
         }
     }
