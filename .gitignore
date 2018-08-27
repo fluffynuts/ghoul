@@ -323,3 +323,4 @@ ASALocalRun/
 *.binlog
 buildreports
 dist
+tools
