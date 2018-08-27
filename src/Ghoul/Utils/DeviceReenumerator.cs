@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using Ghoul.Ui;
 using PeanutButter.INIFile;
 using PeanutButter.Utils;
@@ -10,7 +13,7 @@ namespace Ghoul.Utils
 {
     public interface IDeviceReenumerator
     {
-        bool Reenumerate();
+        bool ReEnumerate();
     }
 
     public class DeviceReenumerator
@@ -44,18 +47,45 @@ namespace Ghoul.Utils
         }
 
         // TODO: make this async so we can cancel it if it takes too long (and auto-disable the feature)
-        public bool Reenumerate()
+        public bool ReEnumerate()
         {
-            if (ReenumerationDisabled())
+            if (ReEnumerationDisabled())
             {
                 _logger.LogInfo("Device re-enumeration disabled.");
                 return true;
             }
 
+            var finalResult = false;
+            var thread = new Thread(() => finalResult = ActuallyReEnumerateDevices());
+            thread.Start();
+            if (!thread.Join(TimeSpan.FromSeconds(5)))
+            {
+                MessageBox.Show(
+                    null,
+                    "Unable to re-enumerate devices timeously. If this persists and re-enumeration isn't important to you, disable this feature in config by setting 'DeviceEnumeration=false' in the [general] section", 
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                try
+                {
+                    thread.Abort();
+                }
+                catch
+                {
+                    /* intentionally left blank */
+                }
+            }
+            return finalResult;
+        }
+
+        private bool ActuallyReEnumerateDevices()
+        {
             int pdnDevInst = 0;
 
             _logger.LogInfo("Locating device node for re-enumeration...");
-            var first = CM_Locate_DevNodeA(ref pdnDevInst, null, CM_LOCATE_DEVNODE_NORMAL) == CR_SUCCESS;
+            var first =
+                CM_Locate_DevNodeA(ref pdnDevInst, null, CM_LOCATE_DEVNODE_NORMAL) ==
+                CR_SUCCESS;
             if (!first)
             {
                 return false;
@@ -69,13 +99,14 @@ namespace Ghoul.Utils
                     $"(set DeviceEnumeration in the [general] section of {_configLocator.FindConfig()} to false)"
                 }.JoinWith("\r\n"));
 
-            var second = CM_Reenumerate_DevNode(pdnDevInst, CM_REENUMERATE_NORMAL) == CR_SUCCESS;
+            var second = CM_Reenumerate_DevNode(pdnDevInst, CM_REENUMERATE_NORMAL) ==
+                         CR_SUCCESS;
             return second;
         }
 
-        private bool ReenumerationDisabled()
+        private bool ReEnumerationDisabled()
         {
-            return !_config.GetSetting<bool>("general", "DeviceEnumeration", false);
+            return !_config.GetSetting<bool>("general", "DeviceEnumeration", true);
         }
     }
 

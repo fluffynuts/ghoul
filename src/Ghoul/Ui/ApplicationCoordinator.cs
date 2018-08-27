@@ -36,6 +36,7 @@ namespace Ghoul.Ui
         private readonly IConfigWatcher _configWatcher;
         private readonly IINIFile _config;
         private readonly ILogger _logger;
+        private readonly IDeviceReenumerator _deviceReenumerator;
         private bool _suppressExternalFileChangeHandling;
 
         public ApplicationCoordinator(
@@ -49,7 +50,8 @@ namespace Ghoul.Ui
             IConfigLocator configLocator,
             IConfigWatcher configWatcher,
             IINIFile config,
-            ILogger logger
+            ILogger logger,
+            IDeviceReenumerator deviceReenumerator
         )
         {
             _layoutSaver = layoutSaver;
@@ -63,6 +65,7 @@ namespace Ghoul.Ui
             _configWatcher = configWatcher;
             _config = config;
             _logger = logger;
+            _deviceReenumerator = deviceReenumerator;
         }
 
         public void Init()
@@ -70,15 +73,22 @@ namespace Ghoul.Ui
             var restoreMenuItem = CreateMenuEntries();
             HandleLayoutAddedEventFor(restoreMenuItem);
             BindDoubleClickToRestoreLast();
-            
-            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Subscribe(Busy);
-            _eventAggregator.GetEvent<LayoutRestoredEvent>().Subscribe(Rest);
-            _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Subscribe(Busy);
-            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Subscribe(Rest);
-            
-            _eventAggregator.GetEvent<LayoutSaveStartedEvent>().Subscribe(SuppressExternalFileChangeHandling);
-            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>().Subscribe(UnsuppressExternalFileChangeHandling);
-            _eventAggregator.GetEvent<ConfigChangedEvent>().Subscribe(OnConfigChangedExternally);
+
+            _eventAggregator.GetEvent<LayoutRestoreStartedEvent>()
+                .Subscribe(Busy);
+            _eventAggregator.GetEvent<LayoutRestoredEvent>()
+                .Subscribe(Rest);
+            _eventAggregator.GetEvent<LayoutSaveStartedEvent>()
+                .Subscribe(Busy);
+            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>()
+                .Subscribe(Rest);
+
+            _eventAggregator.GetEvent<LayoutSaveStartedEvent>()
+                .Subscribe(SuppressExternalFileChangeHandling);
+            _eventAggregator.GetEvent<LayoutSaveCompletedEvent>()
+                .Subscribe(UnsuppressExternalFileChangeHandling);
+            _eventAggregator.GetEvent<ConfigChangedEvent>()
+                .Subscribe(OnConfigChangedExternally);
 
             _configWatcher.StartWatching();
             _trayIcon.Show();
@@ -100,6 +110,7 @@ namespace Ghoul.Ui
             {
                 return;
             }
+
             AttemptConfigReload();
         }
 
@@ -113,7 +124,9 @@ namespace Ghoul.Ui
             {
                 if (++attempt > MAX_RELOAD_ATTEMPTS)
                 {
-                    _logger.LogError($"Giving up on config reload after {MAX_RELOAD_ATTEMPTS} attempts", ex);
+                    _logger.LogError(
+                        $"Giving up on config reload after {MAX_RELOAD_ATTEMPTS} attempts",
+                        ex);
                 }
                 else
                 {
@@ -123,7 +136,9 @@ namespace Ghoul.Ui
             }
             catch (Exception ex)
             {
-                _logger.LogError("Non-io-related exception whilst attempting config reload", ex);
+                _logger.LogError(
+                    "Non-io-related exception whilst attempting config reload",
+                    ex);
             }
         }
 
@@ -145,15 +160,39 @@ namespace Ghoul.Ui
             AddSeparator();
             AddOpenConfigMenuItem();
             AddExitMenuItem();
+
+            _trayIcon.AddMouseClickHandler(MouseClicks.Single,
+                MouseButtons.Middle,
+                ()
+                    =>
+                {
+                    var reEnumerate = _config.GetSetting("general",
+                        "middle-click-hardware-scan",
+                        true);
+                    if (!reEnumerate)
+                        return;
+
+                    _trayIcon.ShowBalloonTipFor(5000,
+                        "Notice",
+                        "Re-enumerating devices... please hold...",
+                        ToolTipIcon.Info);
+                    _deviceReenumerator.ReEnumerate();
+                    _trayIcon.ShowBalloonTipFor(1000,
+                        "Notice",
+                        "Device re-enumeration complete!",
+                        ToolTipIcon.Info);
+                });
+
             return restoreMenuItem;
         }
 
         private void AddOpenConfigMenuItem()
         {
-            _trayIcon.AddMenuItem("Edit config...", () =>
-            {
-                Process.Start(_configLocator.FindConfig());
-            });
+            _trayIcon.AddMenuItem("Edit config...",
+                () =>
+                {
+                    Process.Start(_configLocator.FindConfig());
+                });
         }
 
         private void AddSeparator()
@@ -183,7 +222,6 @@ namespace Ghoul.Ui
             );
         }
 
-
         private void HandleLayoutAddedEventFor(MenuItem restoreMenu)
         {
             _eventAggregator
@@ -194,7 +232,8 @@ namespace Ghoul.Ui
                         var toRemove = new List<MenuItem>();
                         foreach (MenuItem item in restoreMenu.MenuItems)
                             toRemove.Add(item);
-                        toRemove.ForEach(item => item.Parent.MenuItems.Remove(item));
+                        toRemove.ForEach(item
+                            => item.Parent.MenuItems.Remove(item));
                         AddRestoreMenusTo(restoreMenu);
                     });
         }

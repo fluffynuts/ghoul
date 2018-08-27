@@ -64,7 +64,7 @@ namespace Ghoul.AppLogic
                 {
                     var name = _restoreQueue.Dequeue();
                     _eventAggregator.GetEvent<LayoutRestoreStartedEvent>().Publish(name);
-                    _deviceReenumerator.Reenumerate();
+                    _deviceReenumerator.ReEnumerate();
                     _applicationRestarter.RestartApplicationsForLayout(name);
                     RestoreWindowPositionsFor(name);
                 }

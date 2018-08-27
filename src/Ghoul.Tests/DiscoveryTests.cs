@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using DryIoc;
 using Ghoul.Native;
 using Ghoul.Ui;
 using Ghoul.Utils;
@@ -111,24 +114,12 @@ namespace Ghoul.Tests
                         if (d.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
                         {
                             Console.WriteLine(
-                                String.Format(
-                                    "{0}, {1}, {2}, {3}, {4}, {5}",
-                                    id,
-                                    d.DeviceName,
-                                    d.DeviceString,
-                                    d.StateFlags,
-                                    d.DeviceID,
-                                    d.DeviceKey
-                                )
+                                $@"{id}, {d.DeviceName}, {d.DeviceString}, {d.StateFlags}, {d.DeviceID}, {d.DeviceKey}"
                             );
                             d.cb = Marshal.SizeOf(d);
                             EnumDisplayDevices(d.DeviceName, 0, ref d, 0);
                             Console.WriteLine(
-                                String.Format(
-                                    "{0}, {1}",
-                                    d.DeviceName,
-                                    d.DeviceString
-                                )
+                                $"{d.DeviceName}, {d.DeviceString}"
                             );
                         }
 
@@ -137,7 +128,7 @@ namespace Ghoul.Tests
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(String.Format("{0}", ex.ToString()));
+                    Console.WriteLine($"{ex.ToString()}");
                 }
             }
         }
@@ -147,10 +138,10 @@ namespace Ghoul.Tests
         public void ReenumerateDevices()
         {
             var config = Substitute.For<IINIFile>();
-            var general = new Dictionary<string, string>() { ["DeviceEnumeration"] = "true" };
+            var general = new Dictionary<string, string>() {["DeviceEnumeration"] = "true"};
             config["general"].Returns(general);
             var sut = new DeviceReenumerator(Substitute.For<ILogger>(), config, Substitute.For<IConfigLocator>());
-            sut.Reenumerate();
+            sut.ReEnumerate();
         }
     }
 }
