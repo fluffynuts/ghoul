@@ -3,7 +3,7 @@
   "scripts": {
     "zarro": "zarro",
     "install": "zarro install",
-    "build": "zarro build",
+    "build": "run-s \"zarro build\"",
     "release": "zarro release",
     "test": "zarro test-dotnet"
   },
