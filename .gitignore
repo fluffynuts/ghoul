@@ -323,4 +323,6 @@ ASALocalRun/
 *.binlog
 buildreports
 dist
-tools
+build-tools
+*.swp
+*.un~
